@@ -1,33 +1,44 @@
 <template>
-  <div>
-       <a-layout>
-      <a-layout-header>Header</a-layout-header>
+  <div class="home">
+    <a-layout class="home-wrap">
+      <Sider></Sider>
       <a-layout>
-        <a-layout-sider>Sider</a-layout-sider>
-        <a-layout-content>Content</a-layout-content>
+        <Header></Header>
+        <a-layout-content>
+          <keep-alive>
+            <router-view></router-view>
+          </keep-alive>
+        </a-layout-content>
+        <Footer></Footer>
       </a-layout>
     </a-layout>
   </div>
 </template>
 
 <script>
+import Sider from 'home/sider'
+import Footer from 'home/footer'
+import Header from 'home/header'
 export default {
-  data () {
-    return {
-    };
+  data() {
+    return {};
   },
 
   computed: {},
 
-  mounted(){
-    console.log('home')
+  mounted() {
   },
 
   methods: {},
 
-  components: {},
-}
-
+  components: {Sider,Footer,Header}
+};
 </script>
 <style lang='stylus' scoped>
+  .home 
+    width 100%
+    height 100%
+    .home-wrap
+      width 100%
+      height 100%
 </style>

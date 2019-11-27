@@ -1,0 +1,51 @@
+{
+  "id": "1532966",
+  "name": "吉茂",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "766561",
+      "name": "点阵",
+      "font_class": "bk-dot",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "1907709",
+      "name": "车",
+      "font_class": "che",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "7708180",
+      "name": "首页-选中",
+      "font_class": "yemian-copy-copy",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "10342950",
+      "name": "电源",
+      "font_class": "dianyuan",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "10786067",
+      "name": "添加",
+      "font_class": "add-fill",
+      "unicode": "ea40",
+      "unicode_decimal": 59968
+    },
+    {
+      "icon_id": "10803295",
+      "name": "添加",
+      "font_class": "icon-jia5",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    }
+  ]
+}

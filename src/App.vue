@@ -10,10 +10,14 @@
 <style lang="stylus">
 @import '~@/assets/css/reset.styl'
 @import '~@/assets/iconfont/iconfont.css'
-  html body
+  html
     width 100%
     height 100%
-    overflow hidden
+    
+  body  
+    width 100%
+    height 100%
+   
   #app 
     width 100%
     height 100%

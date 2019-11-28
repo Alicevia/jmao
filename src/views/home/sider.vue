@@ -31,6 +31,7 @@ export default {
 </script>
 <style lang='stylus' scoped>
 .sider 
+  height 100%
   background-color #2162B9
   .logo-wrap
     height 1.40rem

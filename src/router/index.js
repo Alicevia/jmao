@@ -12,16 +12,20 @@ const routes = [
     component:()=>import('home/home.vue'),
     children:[
       {
+        path:'',
+        redirect:'productinfo'
+      },
+      {
         path:'productinfo',
-        component:()=>import('home/navRouer/productInfo.vue'),
+        component:()=>import('home/navRouer/productInfo/productInfo.vue'),
       },
       {
         path:'productadd',
-        component:()=>import('home/navRouer/productAdd.vue'),
+        component:()=>import('home/navRouer/productAdd/productAdd.vue')
       },
       {
         path:'caradd',
-        component:()=>import('home/navRouer/carAdd.vue'),
+        component:()=>import('home/navRouer/carAdd/carAdd.vue'),
       },
     ]
     

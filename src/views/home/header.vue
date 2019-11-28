@@ -1,12 +1,13 @@
 <template>
   <a-layout-header class="header">
     <div class="logout">
-      <span class="iconfont">&#xe627;</span> [退出]
+      <span class="iconfont">&#xe627;</span>
+      <span class="logout-icon">[退出]</span>
     </div>
     <img class="header-img" src="~@/assets/images/header-inner.png" alt="">
     <div class="opreate">
-      <span class="iconfont add">&#xe602;</span>
-      <span class="iconfont delete">&#xea40;</span>
+      <span class="add"></span>
+      <span class="delete"></span>
     </div>
   </a-layout-header>
 </template>
@@ -42,12 +43,17 @@ export default {
     float right
     margin-right -.3rem
     margin-top -.1rem
+    cursor pointer
     span 
       vertical-align bottom
+      &.iconfont
+        font-size .25rem
+
+     
   .header-img
     position absolute
-    width 6.22rem
-    height 2.13rem
+    width 6.24rem
+    height 2.15rem
     bottom 0
     left 50%    
     transform translateX(-50%)
@@ -58,12 +64,16 @@ export default {
     display flex
     justify-content space-around
     align-items center
-    width 1.6rem
-
     span 
-      font-size .7rem
-      color white
-  
+      width .89rem
+      height .89rem
+      background-size cover
+      &.add
+        background-image url('~@/assets/images/add.png')
+      &.delete
+        background-image url('~@/assets/images/delete.png')
+
+
         
   
         

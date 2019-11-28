@@ -1,24 +1,21 @@
 <template>
-  <div class="home">
-    <a-layout class="home-wrap">
-      <Sider></Sider>
-      <a-layout>
-        <Header></Header>
-        <a-layout-content>
-          <keep-alive>
-            <router-view></router-view>
-          </keep-alive>
-        </a-layout-content>
-        <Footer></Footer>
-      </a-layout>
+  <a-layout class="home-wrap">
+    <Sider></Sider>
+    <a-layout class="home-right">
+      <Header></Header>
+      <a-layout-content class="content">
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
+      </a-layout-content>
     </a-layout>
-  </div>
+  </a-layout>
 </template>
 
 <script>
-import Sider from 'home/sider'
-import Footer from 'home/footer'
-import Header from 'home/header'
+import Sider from "home/sider";
+import Footer from "home/footer";
+import Header from "home/header";
 export default {
   data() {
     return {};
@@ -26,19 +23,24 @@ export default {
 
   computed: {},
 
-  mounted() {
-  },
+  mounted() {},
 
   methods: {},
 
-  components: {Sider,Footer,Header}
+  components: { Sider, Footer, Header }
 };
 </script>
 <style lang='stylus' scoped>
-  .home 
-    width 100%
+.home-wrap
+  &.ant-layout
     height 100%
-    .home-wrap
+    overflow-y hidden
+
+    .home-right
       width 100%
       height 100%
+      .content
+        width 100%
+        height 100%
+        overflow-y hidden
 </style>

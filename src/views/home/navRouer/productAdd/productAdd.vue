@@ -2,58 +2,62 @@
   <div>
     <a-table
       :columns="columns"
-      :scroll="{x:1000,y:570}"
-      size='middle'
+      :scroll="{x:1000}"
       :bordered="true"
+      rowKey='id'
       :pagination="{
-          defaultPageSize:20,
+          defaultPageSize:10,
           size:'middle',
           position:'bottom'
         }"
       :dataSource="data"
     >
-      <a slot="action" slot-scope="item" href="javascript:;">action</a>
+      <a slot="action" slot-scope="item" href="javascript:;">
+        <a-button type="link"  size='small'>修改</a-button>&nbsp;
+        <a-button type="danger" size='small'>删除</a-button>
+      </a>
     </a-table>
 
   </div>
 </template>
 
 <script>
-const columns = [
-  {
-    title: "Full Name",
-    dataIndex: "name",
-    key: "name",
-    width: "25%",
-    align: "center"
-  },
-  { title: "Age", dataIndex: "age", key: "age", width: "25%", align: "center" },
-  {
-    title: "Column 1",
-    dataIndex: "address",
-    key: "1",
-    width: "25%",
-    align: "center"
-  },
+  const columns = [
+    {width:100,title: '产品名称',  dataIndex: 'productName', key: 'productName', align: 'center'},
+    {width:100, title: '图片',  dataIndex: 'productPic', key: 'productPic',align: 'center'},
+      {width:100, title: '备注',  dataIndex: 'remarks', key: 'remarks',align: 'center'},
+    {width:150,
+      title: '操作',
+      key: 'action',
+      scopedSlots: { customRender: 'action' },
+      align: 'center'
+    },
+  ];
 
-  {
-    title: "Action",
-    key: "operation",
-    width: "25%",
-    scopedSlots: { customRender: "action" },
-    align: "center"
+  const data = [];
+  for (let i = 0; i < 100; i++) {
+    data.push(  {
+        "operation":i,
+        "automobileInformationId": i,
+        "beginningYear": i,
+        "cylinderNumber":i,
+        "displacement":i,
+        "endYear":i,
+        "gearPosition": i,
+        "id": i,
+        "jiMaoNumber": i,
+        "oenumber": i,
+        "pistil": i,
+        "pistilSize": i,
+        "productId": i,
+        "productName": i,
+        "seriesName": i,
+        "tankMaterial": i,
+        "vehicleName":i,
+        "waterChamberSize": i,
+        "waveformHeight": i
+      });
   }
-];
-
-const data = [];
-for (let i = 0; i < 100; i++) {
-  data.push({
-    key: i,
-    name: `Edrward ${i}`,
-    age: 32,
-    address: `London Park no. ${i}`
-  });
-}
 export default {
   data() {
     return {

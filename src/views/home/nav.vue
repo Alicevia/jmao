@@ -54,7 +54,7 @@ export default {
         width 1rem;
         line-height .2rem
         letter-spacing .02rem;
-        font-size .2rem
+        font-size .17rem
         &:first-child
           text-align right
           margin-left -.4rem

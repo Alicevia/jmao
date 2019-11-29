@@ -1,83 +1,131 @@
 <template>
-    <a-table  :columns="columns" 
-    :scroll="{x:1000,y:570}" :size='"middle"'
-    :bordered='true'
-    :pagination="{
-      defaultPageSize:20,
+  <div>
+    <a-table
+      :columns="columns"
+      :scroll="{x:1000}"
+      size="middle"
+      rowKey="id"
+      childrenColumnName="vehicleResponseList"
+      :bordered="true"
+      :pagination="{
+      defaultPageSize:10,
       size:'middle',
       position:'bottom'
     }"
-    :dataSource="data" >
-      <a slot="action" slot-scope="item" href="javascript:;">action</a>
+      :dataSource="showCarSeriesVehicle"
+    >
+      <img class="pic" slot="seriesPic" slot-scope="item" :src="item" alt />
+
+      <a slot="action" slot-scope="item" href="javascript:;">
+        <a-button type="link" size="small">修改</a-button>&nbsp;
+        <a-button type="danger" size="small">删除</a-button>
+      </a>
     </a-table>
+    <AddCarSeriesDialog></AddCarSeriesDialog>
+  </div>
 </template>
 
 <script>
-  const columns = [
-    { title: '车系',  dataIndex: 'vehicleName', key: 'vehicleName', align: 'center'},
-    { title: '车型',  dataIndex: 'vehicleName', key: 'vehicleName',align: 'center'},
-    { title: 'OE号',  dataIndex: 'oenumber', key: 'oenumber',align: 'center'},
-    { title: '吉茂品号',  dataIndex: 'jiMaoNumber', key: 'jiMaoNumber',align: 'center'},
-    { title: '汽车年份(起)',  dataIndex: 'beginningYear', key: 'beginningYear',align: 'center'},
-    { title: '汽车年份(止)',  dataIndex: 'endYear', key: 'endYear',align: 'center'},
-    { title: '排量',  dataIndex: 'displacement', key: 'displacement',align: 'center'},
-    { title: '气缸数',  dataIndex: 'cylinderNumber', key: 'cylinderNumber',align: 'center'},
-    { title: '自动/手动',  dataIndex: 'gearPosition', key: 'gearPosition',align: 'center'},
-    { title: '水箱材质',  dataIndex: 'tankMaterial', key: 'tankMaterial',align: 'center'},
-    { title: '蕊体尺寸',  dataIndex: 'pistilSize', key: 'pistilSize',align: 'center'},
-    { title: '蕊厚',  dataIndex: 'pistil', key: 'pistil',align: 'center'},
-    { title: '波高',  dataIndex: 'waveformHeight', key: 'waveformHeight',align: 'center'},
-    {
-      title: 'Action',
-      key: 'operation',
-      scopedSlots: { customRender: 'action' },
-      align: 'center'
-    },
-  ];
-
-  const data = [];
-  for (let i = 0; i < 100; i++) {
-    data.push({
-      key: i,
-      name: `Edrward ${i}`,
-      age: 32,
-      address: `London Park no. ${i}`,
-    });
+import { mapActions, mapGetters, mapState } from "vuex";
+import AddCarSeriesDialog from "./addCarSeriesDialog";
+const columns = [
+  {
+    title: "车系",
+    dataIndex: "seriesName",
+    key: "seriesName",
+    width: "20%"
+  },
+  {
+    title: "车型",
+    dataIndex: "vehicleName",
+    key: "vehicleName",
+    width: "20%"
+  },
+  {
+    title: "车系图片",
+    dataIndex: "seriesPic",
+    key: "seriesPic",
+    width: "20%",
+    scopedSlots: { customRender: "seriesPic" }
+  },
+  {
+    title: "车型图片",
+    dataIndex: "vehiclePic",
+    key: "vehiclePic",
+    width: "20%",
+    scopedSlots: { customRender: "vehiclePic" }
+  },
+  {
+    title: "操作",
+    scopedSlots: { customRender: "action" },
+    align: "center",
+    width: "20%",
+    dataIndex: "action",
+    key: "action"
   }
+];
+
 export default {
   data() {
     return {
-        data,
-        columns,
+      columns
     };
   },
 
   computed: {
+    ...mapGetters(["showCarSeriesVehicle"]),
+    ...mapState(["allSeriesVhicleInfo", "currentCarSeriesPage"]),
     rowSelection() {
-        const { selectedRowKeys } = this;
+      const { selectedRowKeys } = this;
+      return {
+        onChange: (selectedRowKeys, selectedRows) => {
+          console.log(
+            `selectedRowKeys: ${selectedRowKeys}`,
+            "selectedRows: ",
+            selectedRows
+          );
+        },
+        getCheckboxProps: record => ({
+          props: {
+            disabled: record.name === "Disabled User", // Column configuration not to be checked
+            name: record.name
+          }
+        })
+      };
+    },
+    pagination: {
+      get() {
         return {
-          onChange: (selectedRowKeys, selectedRows) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-          },
-          getCheckboxProps: record => ({
-            props: {
-              disabled: record.name === 'Disabled User', // Column configuration not to be checked
-              name: record.name,
-            },
-          }),
+          defaultPageSize: 1,
+          size: "middle",
+          position: "top",
+          // showSizeChanger:true,
+          total: this.allAttributeInfo.total || 0,
+          onChange: this.changePage
         };
-      },
+      }
+    }
   },
-
+  created() {},
   mounted() {
-
+    this.getCarSeriesVehicleInfo({ page: 1, size: 10 });
   },
 
   methods: {
+    ...mapActions(["getCarSeriesVehicleInfo", "updateCarSeriesVehicleInfo"]),
+    changePage(page) {
+      let { allSeriesVhicleInfo, currentCarSeriesPage } = this;
+      if (!allSeriesVhicleInfo[currentCarSeriesPage]) {
+        this.getCarSeriesVehicleInfo({ page, size: 10 });
+      } else {
+        this.updateCarSeriesVehicleInfo(page);
+      }
 
+      console.log(page);
+    }
   },
 
-  components: {}
+  components: { AddCarSeriesDialog }
 };
 </script>
 <style lang='stylus' scoped>
@@ -85,5 +133,7 @@ export default {
   width 100%
   height 100%
   overflow hidden
-
+  .pic
+    width 40px
+    height 40px
 </style>

@@ -9,9 +9,9 @@ function spliceUrl(data) {
 
 export  function axios({url,data={},method='get',flag=false,config={}}){
   let promise
-  if (!flag) {
+  if (!flag) {//请求体
     promise = Axios({url,method,data,...config})
-  }else {
+  }else {//拼接
     if (method==='get') {
       promise = Axios({url,method,params:data,...config})
     }else {

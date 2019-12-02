@@ -6,10 +6,15 @@ export default {
 
   //     commit(TYPES.RECEIVE_USER_INFO,{userInfo})
   // },
+  // 显示当前的path
+  modiActivePath({commit},payload){
+    commit(TYPES.MODI_ACTIVE_PATH,payload)
+  },
   // 获取每一页的产品属性信息并存储
   async getProductAttributeInfo({ commit }, payload) {
     let { page } = payload
     let { data: { succeed, data } } = await allReq.reqAllAttributeData(payload)
+    // console.log(data)
     if (succeed) {
       if (data.total === 0) {
         message.warning('数据库中数据为空')
@@ -24,6 +29,30 @@ export default {
   updateCurrentAttributeInfoPage({ commit }, page) {
     commit(TYPES.UPDATE_CURRENT_ATTRIBUTE_INFO_PAGE, page)
   },
+
+  // 产品添加页面 -----------------------
+
+  // 获取产品
+  async getProductInfo({ commit }) {
+    let {  data:{succeed,data} } = await allReq.reqAllProductInfo()
+    // console.log(data)
+    if (succeed) {
+      commit(TYPES.GET_PRODUCT_INFO,data)
+    }else{
+      message.error('获取产品信息失败')
+    }
+  },
+  async addProductInfo({commit},payload){
+    let {data:{succeed,data}} = await allReq.reqAddProductCategory(payload)
+    if (succeed) {
+      message.success('产品添加成功')
+      commit(TYPES.ADD_PRODUCT_INFO,data)
+    }else{
+      message.error('产品添加失败，请刷新页面')
+    }
+  },
+
+
 
 
   // 车型车系页面 -----------------------

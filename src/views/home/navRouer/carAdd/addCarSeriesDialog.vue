@@ -8,13 +8,12 @@
       @cancel="handleCancel"
     >
       <a-form :form="form" @submit="handleSubmit">
-
         <a-form-item label="车系" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
           <a-select
             v-decorator="[
-          'gender',
-          { rules: [{ required: true, message: 'Please select your gender!' }] },
-        ]"
+                'gender',
+                { rules: [{ required: true, message: 'Please select your gender!' }] },
+              ]"
             placeholder="Select a option and change input text above"
             @change="handleSelectChange"
           >
@@ -22,7 +21,7 @@
             <a-select-option value="female">female</a-select-option>
           </a-select>
         </a-form-item>
-                <a-form-item label="添加车系" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+        <a-form-item label="添加车系" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
           <a-input
             v-decorator="['note', { rules: [{ required: true, message: 'Please input your note!' }] }]"
           />
@@ -39,7 +38,7 @@ export default {
   data() {
     return {
       ModalText: "",
-      visible: false,
+      visible: true,
       confirmLoading: false,
 
       formLayout: "horizontal",

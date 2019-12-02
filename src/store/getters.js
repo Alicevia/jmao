@@ -1,3 +1,5 @@
+import utils from "@/utils"
+
 export default {
     // pages(state,getters){
     //     let {iconList} = state
@@ -12,6 +14,10 @@ export default {
     //     })
     //     return pages
     //  },
+   
+
+
+
     // 显示产品属性页面
     showProductAttribute(state){
       let {
@@ -26,6 +32,13 @@ export default {
         return attributeAry
       }
 
+    },
+    // 显示产品
+    showProductList(state){
+      let {productInfo} = state
+      let productList = productInfo.productList
+      productList = utils.changeAry(productList,10)
+      return productList
     },
     // 显示车型车系
     showCarSeriesVehicle(state){

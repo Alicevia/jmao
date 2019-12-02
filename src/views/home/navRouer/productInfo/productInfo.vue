@@ -18,10 +18,10 @@
       :pagination="pagination"
       :dataSource="showProductAttribute"
     >
-      <a slot="action" slot-scope="item" href="javascript:;">
+      <template slot="action" slot-scope="item">
         <a-button type="link" size="small">修改</a-button>&nbsp;
         <a-button type="danger" size="small">删除</a-button>
-      </a>
+      </template>
     </a-table>
   </div>
 </template>
@@ -200,7 +200,7 @@ export default {
           size: "middle",
           position: "top",
           // showSizeChanger:true,
-          total: this.allAttributeInfo.total || 0,
+          total: this.allAttributeInfo.total || 1,
           onChange:this.changePage
         };
       }
@@ -208,7 +208,7 @@ export default {
   },
 
   mounted() {
-    this.getProductAttributeInfo({ page: 1, size: 1 });
+    this.getProductAttributeInfo({ page: 1, size: 10 });
   },
 
   methods: {

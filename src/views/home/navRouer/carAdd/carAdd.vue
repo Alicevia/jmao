@@ -5,7 +5,7 @@
       :scroll="{x:1000}"
       size="middle"
       rowKey="id"
-      childrenColumnName="vehicleResponseList"
+      :childrenColumnName="'vehicleResponseList'"
       :bordered="true"
       :pagination="{
       defaultPageSize:10,
@@ -14,7 +14,8 @@
     }"
       :dataSource="showCarSeriesVehicle"
     >
-      <img class="pic" slot="seriesPic" slot-scope="item" :src="item" alt />
+      <img :style="pic" slot="seriesPic" slot-scope="item" :src="item" alt />
+      <img :style="pic" slot="vehiclePic" slot-scope="item" :src="item" alt />
 
       <a slot="action" slot-scope="item" href="javascript:;">
         <a-button type="link" size="small">修改</a-button>&nbsp;
@@ -33,27 +34,34 @@ const columns = [
     title: "车系",
     dataIndex: "seriesName",
     key: "seriesName",
-    width: "20%"
+    width: "20%",
+    align:'center'
   },
   {
     title: "车型",
     dataIndex: "vehicleName",
     key: "vehicleName",
-    width: "20%"
+    width: "20%",
+    align:'center'
+
   },
   {
     title: "车系图片",
     dataIndex: "seriesPic",
     key: "seriesPic",
     width: "20%",
-    scopedSlots: { customRender: "seriesPic" }
+    scopedSlots: { customRender: "seriesPic" },
+    align:'center'
+
   },
   {
     title: "车型图片",
     dataIndex: "vehiclePic",
     key: "vehiclePic",
     width: "20%",
-    scopedSlots: { customRender: "vehiclePic" }
+    scopedSlots: { customRender: "vehiclePic" },
+    align:'center'
+
   },
   {
     title: "操作",
@@ -68,7 +76,11 @@ const columns = [
 export default {
   data() {
     return {
-      columns
+      columns,
+      pic:{
+        display:'inline-block',
+        height:'60px'
+      }
     };
   },
 
@@ -133,7 +145,8 @@ export default {
   width 100%
   height 100%
   overflow hidden
-  .pic
+  /deep/ .pic
+    display inline-block
     width 40px
     height 40px
 </style>

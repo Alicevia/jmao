@@ -10,6 +10,32 @@ export const reqAllAttributeData=(data)=>{
   })
 }
 
+// 获取产品信息
+export const reqAllProductInfo = ()=>axios({
+  url:'search/findProductAll',
+  method:'get',
+  flag:false
+})
+// 添加产品信息
+export const reqAddProductCategory=(data)=>axios({
+  url:'edit/addProduct',
+  method:'post',
+  data,
+  flag:false
+})
+//删除产品信息
+export const reqDeleteProductCategory = data=>axios({
+  url:''
+})
+// 修改产品信息
+export const reqModiProductCategory = data=>axios({
+  url:'edit/addProduct',
+  method:'post',
+  data,
+  flag:false,
+})
+
+
 
 
 // 获取车型车系信息

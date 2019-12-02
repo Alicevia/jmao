@@ -6,16 +6,18 @@
     </div>
     <img class="header-img" src="~@/assets/images/header-inner.png" alt="">
     <div class="opreate">
-      <span class="add"></span>
+      <span class="add" @click="showDialog"></span>
       <span class="delete"></span>
     </div>
   </a-layout-header>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 export default {
   data () {
     return {
+
     };
   },
 
@@ -23,7 +25,14 @@ export default {
 
   mounted(){},
 
-  methods: {},
+  methods: {
+    ...mapActions(['modiActivePath']),
+    showDialog(){
+      let {path} = this.$route
+      this.modiActivePath(this.$route.path)
+      console.log(this.$route.path)
+    }
+  },
 
   components: {},
 }
@@ -68,6 +77,7 @@ export default {
       width .89rem
       height .89rem
       background-size cover
+      cursor pointer
       &.add
         background-image url('~@/assets/images/add.png')
       &.delete

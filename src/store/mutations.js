@@ -25,12 +25,23 @@ export default {
   // 添加产品页面-----------------
   //获取产品信息
   [TYPES.GET_PRODUCT_INFO](state,payload){
-    console.log(payload)
     state.productInfo = payload
   },
+  // 添加产品
   [TYPES.ADD_PRODUCT_INFO](state,payload){
     let {productInfo} = state
     productInfo.push(payload)
+    state.productInfo = productInfo
+  },
+  // 修改产品
+  [TYPES.MODI_PRODUCT_INFO](state,payload){
+    let {productInfo} = state
+    productInfo = productInfo.map(item=>{
+      if (item.id===payload.id) {
+        item = payload
+      }
+      return item
+    })
     state.productInfo = productInfo
   },
 
@@ -43,6 +54,16 @@ export default {
     currentCarSeriesPage = page
     state.allSeriesVhicleInfo = JSON.parse(JSON.stringify(allSeriesVhicleInfo))
   },
+  // 所有的车系信息
+  [TYPES.GET_ALL_CAR_SERIES](state,payload){
+    if (payload.length) {
+      state.allCarSeries = payload 
+    }
+  },
+  // 添加车系车型
+  // [TYPES.ADD_CAR_SERIES_VEHICLE_INFO](state,payload){
+
+  // }
   // 更新产品展示页面的页数
   [TYPES.UPDATE_CAE_SERIES_VEHICLE_PAGE](state, page) {
     state.currentCarSeriesPage = page

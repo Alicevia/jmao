@@ -42,6 +42,7 @@ export default {
       message.error('获取产品信息失败')
     }
   },
+  // 添加产品信息
   async addProductInfo({commit},payload){
     let {data:{succeed,data}} = await allReq.reqAddProductCategory(payload)
     if (succeed) {
@@ -49,6 +50,16 @@ export default {
       commit(TYPES.ADD_PRODUCT_INFO,data)
     }else{
       message.error('产品添加失败，请刷新页面')
+    }
+  },
+  // 修改产品信息
+  async modiProductInfo({commit},payload){
+    let {data:{succeed,data}} = await allReq.reqModiProductCategory(payload)
+    if (succeed) {
+      message.success('修改产品信息成功')
+      commit(TYPES.MODI_PRODUCT_INFO,data)
+    }else{
+      message.error('修改产品信息失败')
     }
   },
 
@@ -61,7 +72,6 @@ export default {
   async getCarSeriesVehicleInfo({ commit }, payload) {
     let { page } = payload
     let { data: { succeed, data } } = await allReq.reqCarSeriesVehicleInfo(payload)
-    console.log(data)
     if (succeed) {
       if (data.total === 0) {
         message.warning('车系车型数据为空')
@@ -75,6 +85,31 @@ export default {
   // 修改当前显示的属性页码
   updateCarSeriesVehicleInfo({ commit }, page) {
     commit(TYPES.UPDATE_CAE_SERIES_VEHICLE_PAGE, page)
+  },
+  // 获取全部车系
+  async getAllCarSeries({commit}){
+    let { data: { succeed, data } } = await allReq.reqAllCarSeries()
+    if (succeed) {
+      commit(TYPES.GET_ALL_CAR_SERIES,data)
+    }
+  },
+  async addCarSeriesOrVehicle({commit},payload){
+    let { data: { succeed, data } } = await allReq.reqAddCarCarSeriesVehicle(payload)
+    if (succeed) {
+      message.success('添加车系车型成功')
+      // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
+    }else{
+      message.error('添加车系车型失败')
+    }
+  },
+  async modiCarSeriesOrVehicle({commit},payload){
+    let { data: { succeed, data } } = await allReq.reqModiCarCarSeriesVehicle(payload)
+    if (succeed) {
+      message.success('修改车系车型成功')
+      // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
+    }else{
+      message.error('修改车系车型失败')
+    }
   },
 
 }

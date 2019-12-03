@@ -23,15 +23,33 @@ function getBase64(img, callback) {
 }
 
 export default {
+  props:['picture'],
   data() {
     return {
       loading: false,
-      imageUrl: ""
+      // imageUrl:this.picture||''
+      tempimg:''
     };
   },
+  computed:{
+    imageUrl:{
+      get(){
+        if (this.tempimg) {
+          return this.tempimg
+        }else{
+          return this.picture
+        }
+      },
+      set(value){
+        this.tempimg = value
+      }
+    }
+  },
+  mounted(){
+  },
+ 
   methods: {
     handleChange(info) {
-      console.log(info);
       // 传递图片
       this.$emit("getUploadImg", info.file.originFileObj);
       getBase64(info.file.originFileObj, imageUrl => {

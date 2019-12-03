@@ -13,7 +13,7 @@
     <a-table
       :rowSelection="rowSelection"
       :columns="columns"
-      :scroll="{x:1680}"
+      :scroll="{x:1880}"
       rowKey="id"
       :pagination="pagination"
       :dataSource="showProductAttribute"
@@ -49,9 +49,17 @@ const columns = [
   {
     width: 100,
     fixed: "left",
-    title: "适用车型",
+    title: "产品名",
     dataIndex: "productName",
     key: "productName",
+    align: "center"
+  },
+    {
+    width: 100,
+    // fixed: "left",
+    title: "适用车型",
+    dataIndex: "applicableVehicleType",
+    key: "applicableVehicleType",
     align: "center"
   },
   {

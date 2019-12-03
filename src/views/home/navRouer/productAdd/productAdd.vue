@@ -21,7 +21,10 @@
         </a-popconfirm>
       </template>
     </a-table>
-    <ProductAddDialog :showDataToChild='showDataToChild'></ProductAddDialog>
+    <ProductAddDialog 
+    @clearProductToChild='clearProductToChild'
+    :showDataToChild='showDataToChild'>
+    </ProductAddDialog>
   </div>
 </template>
 
@@ -63,7 +66,7 @@ const columns = [
 export default {
   data() {
     return {
-      showDataToChild:'',
+      showDataToChild:{},
       columns,
       pic: {
         display: "inline-block",
@@ -76,6 +79,7 @@ export default {
   computed: {
     ...mapGetters(["showProductList"]),
     ...mapState(["productInfo"]),
+    // 分页配置
     pagination: {
       get() {
         return {
@@ -114,7 +118,6 @@ export default {
     ...mapActions(["getProductInfo",'modiActivePath']),
     // 删除产品信息
     onDelete(item) {
-      console.log(item);
 
       // this.dataSource = dataSource.filter(item => item.key !== key);
     },
@@ -122,6 +125,10 @@ export default {
     changeProductInfo(item) {
       this.showDataToChild = item
       this.modiActivePath(this.$route.path)
+    },
+    // 清除传递的数据
+    clearProductToChild(){
+      this.showDataToChild={}
     }
   },
 

@@ -30,7 +30,6 @@ export default {
     showDialog(){
       let {path} = this.$route
       this.modiActivePath(this.$route.path)
-      console.log(this.$route.path)
     }
   },
 

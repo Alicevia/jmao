@@ -16,7 +16,7 @@ export default {
   
   productInfo:[],
   //车系添加页面
-  
+  allCarSeries:[],
   currentCarSeriesPage:1,
   allSeriesVhicleInfo:{}
 

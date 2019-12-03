@@ -16,13 +16,12 @@
     >
       <img :style="pic" slot="seriesPic" slot-scope="item" :src="item" alt />
       <img :style="pic" slot="vehiclePic" slot-scope="item" :src="item" alt />
-
-      <a slot="action" slot-scope="item" href="javascript:;">
-        <a-button type="link" size="small">修改</a-button>&nbsp;
-        <a-button type="danger" size="small">删除</a-button>
-      </a>
+      <template slot="action" slot-scope="text,record">
+        <a-button type="link" size="small" @click="changeCar(record)">修改</a-button>&nbsp;
+        <a-button type="danger" size="small" @click="deleteCar(record)">删除</a-button>
+      </template>
     </a-table>
-    <AddCarSeriesDialog></AddCarSeriesDialog>
+    <AddCarSeriesDialog :showDataToChild="showDataToChild"></AddCarSeriesDialog>
   </div>
 </template>
 
@@ -35,15 +34,14 @@ const columns = [
     dataIndex: "seriesName",
     key: "seriesName",
     width: "20%",
-    align:'center'
+    align: "center"
   },
   {
     title: "车型",
     dataIndex: "vehicleName",
     key: "vehicleName",
     width: "20%",
-    align:'center'
-
+    align: "center"
   },
   {
     title: "车系图片",
@@ -51,8 +49,7 @@ const columns = [
     key: "seriesPic",
     width: "20%",
     scopedSlots: { customRender: "seriesPic" },
-    align:'center'
-
+    align: "center"
   },
   {
     title: "车型图片",
@@ -60,26 +57,27 @@ const columns = [
     key: "vehiclePic",
     width: "20%",
     scopedSlots: { customRender: "vehiclePic" },
-    align:'center'
-
+    align: "center"
   },
   {
     title: "操作",
-    scopedSlots: { customRender: "action" },
     align: "center",
     width: "20%",
     dataIndex: "action",
-    key: "action"
+    key: "action",
+    scopedSlots: { customRender: "action" },
+
   }
 ];
 
 export default {
   data() {
     return {
+      showDataToChild: {},
       columns,
-      pic:{
-        display:'inline-block',
-        height:'60px'
+      pic: {
+        display: "inline-block",
+        height: "60px"
       }
     };
   },
@@ -87,24 +85,24 @@ export default {
   computed: {
     ...mapGetters(["showCarSeriesVehicle"]),
     ...mapState(["allSeriesVhicleInfo", "currentCarSeriesPage"]),
-    rowSelection() {
-      const { selectedRowKeys } = this;
-      return {
-        onChange: (selectedRowKeys, selectedRows) => {
-          console.log(
-            `selectedRowKeys: ${selectedRowKeys}`,
-            "selectedRows: ",
-            selectedRows
-          );
-        },
-        getCheckboxProps: record => ({
-          props: {
-            disabled: record.name === "Disabled User", // Column configuration not to be checked
-            name: record.name
-          }
-        })
-      };
-    },
+    // rowSelection() {
+    //   const { selectedRowKeys } = this;
+    //   return {
+    //     onChange: (selectedRowKeys, selectedRows) => {
+    //       console.log(
+    //         `selectedRowKeys: ${selectedRowKeys}`,
+    //         "selectedRows: ",
+    //         selectedRows
+    //       );
+    //     },
+    //     getCheckboxProps: record => ({
+    //       props: {
+    //         disabled: record.name === "Disabled User", // Column configuration not to be checked
+    //         name: record.name
+    //       }
+    //     })
+    //   };
+    // },
     pagination: {
       get() {
         return {
@@ -124,7 +122,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getCarSeriesVehicleInfo", "updateCarSeriesVehicleInfo"]),
+    ...mapActions(["getCarSeriesVehicleInfo", "updateCarSeriesVehicleInfo",'modiActivePath']),
     changePage(page) {
       let { allSeriesVhicleInfo, currentCarSeriesPage } = this;
       if (!allSeriesVhicleInfo[currentCarSeriesPage]) {
@@ -134,6 +132,16 @@ export default {
       }
 
       console.log(page);
+    },
+    // 修改车型车系
+    changeCar(item) {
+      console.log(item)
+      this.showDataToChild = item;
+      this.modiActivePath(this.$route.path);
+    },
+    // 删除车型车系
+    deleteCar(item){
+      console.log(item)
     }
   },
 

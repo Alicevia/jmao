@@ -29,7 +29,7 @@ export const reqDeleteProductCategory = data=>axios({
 })
 // 修改产品信息
 export const reqModiProductCategory = data=>axios({
-  url:'edit/addProduct',
+  url:'edit/updateProduct',
   method:'post',
   data,
   flag:false,
@@ -45,8 +45,19 @@ export const reqCarSeriesVehicleInfo=(data)=>axios({
   flag:true
 })
 // 添加车型车系
-// export const reqAddCarCarSeriesVehicle=(data)=>axios({
-//   url:'edit/addAutomobileInformation',
-//   method:'post',
-//   data,
-// })
+export const reqAddCarCarSeriesVehicle=(data)=>axios({
+  url:'edit/addAutomobileInformation',
+  method:'post',
+  data,
+})
+// 修改车型车系
+export const reqModiCarCarSeriesVehicle=(data)=>axios({
+  url:'edit/updateAutomobileInformation',
+  method:'post',
+  data,
+})
+// 获取全部车系
+export const reqAllCarSeries=()=>axios({
+  url:'search/findCarSeriesInformation',
+  method:'get',
+})

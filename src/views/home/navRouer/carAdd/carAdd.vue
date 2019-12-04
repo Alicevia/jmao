@@ -3,25 +3,29 @@
     <a-table
       :columns="columns"
       :scroll="{x:1000}"
-      size="middle"
       rowKey="id"
       :childrenColumnName="'vehicleResponseList'"
       :bordered="true"
-      :pagination="{
-      defaultPageSize:10,
-      size:'middle',
-      position:'bottom'
-    }"
+      :pagination="pagination"
       :dataSource="showCarSeriesVehicle"
     >
       <img :style="pic" slot="seriesPic" slot-scope="item" :src="item" alt />
       <img :style="pic" slot="vehiclePic" slot-scope="item" :src="item" alt />
       <template slot="action" slot-scope="text,record">
         <a-button type="link" size="small" @click="changeCar(record)">修改</a-button>&nbsp;
-        <a-button type="danger" size="small" @click="deleteCar(record)">删除</a-button>
+        <a-popconfirm
+          v-if="showCarSeriesVehicle.length"
+          :title="deleteTitle(record)"
+          @confirm="() => onDelete(record)"
+        >
+          <a-button type="danger" size="small">删除</a-button>
+        </a-popconfirm>
       </template>
     </a-table>
-    <AddCarSeriesDialog :showDataToChild="showDataToChild"></AddCarSeriesDialog>
+    <AddCarSeriesDialog
+      @clearCarInfoToChild="clearCarInfoToChild"
+      :showDataToChild="showDataToChild"
+    ></AddCarSeriesDialog>
   </div>
 </template>
 
@@ -65,8 +69,7 @@ const columns = [
     width: "20%",
     dataIndex: "action",
     key: "action",
-    scopedSlots: { customRender: "action" },
-
+    scopedSlots: { customRender: "action" }
   }
 ];
 
@@ -85,32 +88,24 @@ export default {
   computed: {
     ...mapGetters(["showCarSeriesVehicle"]),
     ...mapState(["allSeriesVhicleInfo", "currentCarSeriesPage"]),
-    // rowSelection() {
-    //   const { selectedRowKeys } = this;
-    //   return {
-    //     onChange: (selectedRowKeys, selectedRows) => {
-    //       console.log(
-    //         `selectedRowKeys: ${selectedRowKeys}`,
-    //         "selectedRows: ",
-    //         selectedRows
-    //       );
-    //     },
-    //     getCheckboxProps: record => ({
-    //       props: {
-    //         disabled: record.name === "Disabled User", // Column configuration not to be checked
-    //         name: record.name
-    //       }
-    //     })
-    //   };
-    // },
+    // 车系车型标题切换
+    deleteTitle(item) {
+      return item => {
+        if (item.seriesName) {
+          return "车系被删除，其下车型会被全部删除";
+        } else {
+          return "确定要删除该车型吗";
+        }
+      };
+    },
     pagination: {
       get() {
         return {
-          defaultPageSize: 1,
+          defaultPageSize: 10,
           size: "middle",
-          position: "top",
+          position: "bottom",
           // showSizeChanger:true,
-          total: this.allAttributeInfo.total || 0,
+          total: this.allSeriesVhicleInfo.total || 0,
           onChange: this.changePage
         };
       }
@@ -118,31 +113,46 @@ export default {
   },
   created() {},
   mounted() {
-    this.getCarSeriesVehicleInfo({ page: 1, size: 10 });
+    this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
   },
 
   methods: {
-    ...mapActions(["getCarSeriesVehicleInfo", "updateCarSeriesVehicleInfo",'modiActivePath']),
+    ...mapActions([
+      "getCarSeriesVehicleInfo",
+      "updateCarSeriesVehicleInfo",
+      "deleteCarSeriesOrVehicle",
+      "modiActivePath",
+      "getAllCarSeries"
+    ]),
+    // 改变页码
     changePage(page) {
       let { allSeriesVhicleInfo, currentCarSeriesPage } = this;
-      if (!allSeriesVhicleInfo[currentCarSeriesPage]) {
-        this.getCarSeriesVehicleInfo({ page, size: 10 });
-      } else {
-        this.updateCarSeriesVehicleInfo(page);
-      }
-
-      console.log(page);
+      this.updateCarSeriesVehicleInfo(page);
+ 
+  
     },
     // 修改车型车系
     changeCar(item) {
-      console.log(item)
+      console.log(item);
       this.showDataToChild = item;
       this.modiActivePath(this.$route.path);
     },
-    // 删除车型车系
-    deleteCar(item){
-      console.log(item)
+    // 情况传递的数据
+    clearCarInfoToChild() {
+      this.showDataToChild = {};
+    },
+    // 确定删除
+    onDelete(item) {
+      console.log(item.id);
+      this.deleteCarSeriesOrVehicle(item.id).then(() => {
+        this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
+      });
     }
+    // 删除车型车系
+    // deleteCar(item) {
+    //   // this.deleteTitle(item);
+    //   // console.log(item);
+    // }
   },
 
   components: { AddCarSeriesDialog }

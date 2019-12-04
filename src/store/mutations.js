@@ -56,7 +56,7 @@ export default {
   },
   // 所有的车系信息
   [TYPES.GET_ALL_CAR_SERIES](state,payload){
-    if (payload.length) {
+    if (payload.length>0) {
       state.allCarSeries = payload 
     }
   },

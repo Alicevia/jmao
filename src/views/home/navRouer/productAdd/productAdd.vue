@@ -14,7 +14,7 @@
         <a-button type="link" size="small" @click="changeProductInfo(item)">修改</a-button>&nbsp;
         <a-popconfirm
           v-if="productInfo.length"
-          title="Sure to delete?"
+          title="删除该产品，会使该产品下的所有信息被删除"
           @confirm="() => onDelete(item)"
         >
           <a-button type="danger" size="small">删除</a-button>
@@ -90,24 +90,6 @@ export default {
         };
       }
     }
-    // rowSelection() {
-    //   const { selectedRowKeys } = this;
-    //   return {
-    //     onChange: (selectedRowKeys, selectedRows) => {
-    //       console.log(
-    //         `selectedRowKeys: ${selectedRowKeys}`,
-    //         "selectedRows: ",
-    //         selectedRows
-    //       );
-    //     },
-    //     getCheckboxProps: record => ({
-    //       props: {
-    //         disabled: record.name === "Disabled User", // Column configuration not to be checked
-    //         name: record.name
-    //       }
-    //     })
-    //   };
-    // }
   },
   created() {
     this.getProductInfo();

@@ -43,8 +43,9 @@ export default {
     // 显示车型车系
     showCarSeriesVehicle(state){
       let {allSeriesVhicleInfo,currentCarSeriesPage} = state
-      let newAry = allSeriesVhicleInfo[currentCarSeriesPage]||[]
-
+      let newAllSeriesVhicleInfo = allSeriesVhicleInfo[1]||[]
+      newAllSeriesVhicleInfo = utils.changeAry(newAllSeriesVhicleInfo,10)
+      let newAry = newAllSeriesVhicleInfo[currentCarSeriesPage-1]
       return newAry 
     }
 

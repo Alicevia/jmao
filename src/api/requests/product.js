@@ -42,6 +42,7 @@ export const reqModiProductCategory = data=>axios({
 export const reqCarSeriesVehicleInfo=(data)=>axios({
   url:'search/findSeriesInformation',
   data,
+  method:'get',
   flag:true
 })
 // 添加车型车系
@@ -55,6 +56,11 @@ export const reqModiCarCarSeriesVehicle=(data)=>axios({
   url:'edit/updateAutomobileInformation',
   method:'post',
   data,
+})
+// 删除车型车系
+export const reqDeleteCarSeriesVehicle=(id)=>axios({
+  url:`edit/deleteAutomobileInformation/${id}`,
+  method:'delete',
 })
 // 获取全部车系
 export const reqAllCarSeries=()=>axios({

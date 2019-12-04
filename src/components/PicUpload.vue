@@ -23,7 +23,7 @@ function getBase64(img, callback) {
 }
 
 export default {
-  props:['picture'],
+  props:['picture'],//图片的http链接
   data() {
     return {
       loading: false,
@@ -39,6 +39,7 @@ export default {
         }else{
           return this.picture
         }
+        
       },
       set(value){
         this.tempimg = value
@@ -52,11 +53,15 @@ export default {
     handleChange(info) {
       // 传递图片
       this.$emit("getUploadImg", info.file.originFileObj);
+      // 回显
       getBase64(info.file.originFileObj, imageUrl => {
         this.imageUrl = imageUrl;
         this.loading = false;
       });
     }
+  },
+  beforeDestroy(){
+ 
   }
 };
 </script>

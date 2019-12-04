@@ -93,6 +93,7 @@ export default {
       commit(TYPES.GET_ALL_CAR_SERIES,data)
     }
   },
+  // 添加车系车系
   async addCarSeriesOrVehicle({commit},payload){
     let { data: { succeed, data } } = await allReq.reqAddCarCarSeriesVehicle(payload)
     if (succeed) {
@@ -102,6 +103,7 @@ export default {
       message.error('添加车系车型失败')
     }
   },
+  // 修改车型车系
   async modiCarSeriesOrVehicle({commit},payload){
     let { data: { succeed, data } } = await allReq.reqModiCarCarSeriesVehicle(payload)
     if (succeed) {
@@ -109,6 +111,16 @@ export default {
       // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
     }else{
       message.error('修改车系车型失败')
+    }
+  },
+  // 删除车型车系
+  async deleteCarSeriesOrVehicle({commit},payload){
+    let { data: { succeed, data } } = await allReq.reqDeleteCarSeriesVehicle(payload)
+    if (succeed) {
+      message.success('删除车系车型成功')
+      // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
+    }else{
+      message.error('删除车系车型失败')
     }
   },
 

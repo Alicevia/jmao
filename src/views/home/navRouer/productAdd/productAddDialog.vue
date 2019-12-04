@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-modal
-      title="产品添加"
+      :title="showDataToChild.id?'产品修改':'产品添加'"
       :visible="visible"
       @ok="handleOk"
       :confirmLoading="confirmLoading"
@@ -9,6 +9,7 @@
       :maskClosable="false"
       :keyboard="false"
       :afterClose="closeCallBack"
+      :destroyOnClose="true"
     >
       <a-form :form="form">
         <a-form-item label="产品名称" :label-col="{ span: 8}" :wrapper-col="{ span: 12 }">
@@ -25,7 +26,8 @@
           <PicUpload
             @getUploadImg="getUploadImg"
             v-decorator="[
-            'productPic'
+            'file',
+            {  rules: [{ required: showDataToChild.id?false:true, message: '请上传产品图片' }]}
            ]"
             :picture="pictureToChild"
           ></PicUpload>
@@ -54,7 +56,7 @@ export default {
     ...mapState(["activePath"]),
     visible: {
       get() {
-        return this.$route.path === this.activePath ? true : false;
+        return '/home/productadd' === this.activePath ? true : false;
       }
     },
     pictureToChild() {
@@ -69,7 +71,6 @@ export default {
     },
     // 关闭弹窗
     handleCancel() {
-      // this.$emit('clearProductToChild')
       this.modiActivePath("");
     },
     // 关闭之后的回调
@@ -82,21 +83,19 @@ export default {
     handleOk(e) {
       e.preventDefault();
       if (this.img) {
-        this.form.setFieldsValue({ productPic: this.img });
+        this.form.setFieldsValue({ file: this.img });
       }
       this.form.validateFields(async (err, values) => {
         if (!err) {
           let formdata = new FormData();
           for (const key in values) {
-            if (values.hasOwnProperty(key) && values[key]) {
-              if (key === "productPic") {
-                formdata.append("file", values[key]);
-              } else {
-                formdata.append([key], values[key]);
-              }
+            if (!values.hasOwnProperty(key)) return;
+            if (key === "file" && !values["file"]) {
+              continue;
             }
+            formdata.append([key], values[key]);
           }
-          if (this.showDataToChild.productName) {
+          if (this.showDataToChild.id) {
             formdata.append("id", this.showDataToChild.id);
             this.modiProductInfo(formdata).then(() => {
               this.modiActivePath("");

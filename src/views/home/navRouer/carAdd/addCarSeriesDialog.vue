@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-modal
-      title="车系(车型)添加"
+      :title="showDataToChild.id?'车系车型添加':'车系车型修改'"
       :visible="visible"
       @ok="handleOk"
       :confirmLoading="confirmLoading"
@@ -9,11 +9,13 @@
       :maskClosable="false"
       :keyboard="false"
       :afterClose="closeCallBack"
+      :destroyOnClose='true'
     >
       <a-form :form="form">
         <a-form-item label="车系" :label-col="{ span: 8 }" :wrapper-col="{ span: 12 }">
           <a-select
-            v-decorator="['parentId',{initialValue:showDataToChild.parentId}]"
+            v-decorator="['parentId',
+            {initialValue:showDataToChild.parentId||0}]"
             @change="handleSelectChange"
           >
             <a-select-option :value="0">默认为添加车系</a-select-option>
@@ -37,7 +39,7 @@
             @getUploadImg="getUploadImg"
             v-decorator="[
              'file',
-             { rules: [{ required: true, message: '请上传车系或车型图片' }] }
+             { rules: [{ required: showDataToChild.id?false:true, message: '请上传车系或车型图片' }] }
             ]"
             :picture="pictureToChild"
           ></PicUpload>
@@ -64,30 +66,29 @@ export default {
   },
 
   computed: {
-    ...mapState(["activePath", "allCarSeries"]),
+    ...mapState(["activePath", "allCarSeries", "currentCarSeriesPage"]),
     visible: {
       get() {
-        return this.$route.path === this.activePath ? true : false;
+        return '/home/caradd'=== this.activePath ? true : false;
       }
     },
-
+    // 给upload的图片属性
     pictureToChild() {
-      return this.showDataToChild.seriesPic||this.showDataToChild.vehiclePic
+      return this.showDataToChild.seriesPic || this.showDataToChild.vehiclePic;
     }
+
   },
   created() {
     this.getAllCarSeries();
   },
-  mounted() {},
-  updated() {
-    console.log(this.showDataToChild);
-  },
+
   methods: {
     ...mapActions([
       "modiActivePath",
       "addCarSeriesOrVehicle",
       "modiCarSeriesOrVehicle",
-      "getAllCarSeries"
+      "getAllCarSeries",
+      "getCarSeriesVehicleInfo"
     ]),
     // 获取到upload中的图片信息
     getUploadImg(img) {
@@ -95,14 +96,14 @@ export default {
     },
     // 关闭弹窗
     handleCancel() {
-      // this.$emit('clearProductToChild')
       this.modiActivePath("");
     },
     // 关闭之后的回调
     closeCallBack() {
       // 清空表单
+      console.log('--')
       this.form.resetFields();
-      this.$emit("clearProductToChild");
+      this.$emit("clearCarInfoToChild");
     },
     // 弹窗的确定按钮
     handleOk(e) {
@@ -112,20 +113,29 @@ export default {
       }
       this.form.validateFields((err, values) => {
         if (!err) {
-          console.log(values);
           let formdata = new FormData();
           for (const key in values) {
             if (!values.hasOwnProperty(key)) return;
+            if (key==='file' && !values['file']) {
+              continue
+            }
             formdata.append([key], values[key]);
           }
           if (this.showDataToChild.id) {
-            formdata.append('id',this.showDataToChild.id)
+            formdata.append("id", this.showDataToChild.id);
+            console.log(values,formdata)
             this.modiCarSeriesOrVehicle(formdata).then(() => {
               this.modiActivePath("");
+              this.getCarSeriesVehicleInfo({
+                page: this.currentCarSeriesPage,
+                size: 10
+              });
+              
             });
           } else {
             this.addCarSeriesOrVehicle(formdata).then(() => {
               this.modiActivePath("");
+              this.getAllCarSeries();
             });
           }
         }

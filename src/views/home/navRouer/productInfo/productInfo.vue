@@ -13,7 +13,7 @@
     <a-table
       :rowSelection="rowSelection"
       :columns="columns"
-      :scroll="{x:1880}"
+      :scroll="{x:1960}"
       rowKey="id"
       :pagination="pagination"
       :dataSource="showProductAttribute"
@@ -23,12 +23,17 @@
         <a-button type="danger" size="small">删除</a-button>
       </template>
     </a-table>
+    <ProductInfoDialog
+      @clearProductInfoToChild="clearProductInfoToChild"
+      :showDataToChild="showDataToChild"
+    ></ProductInfoDialog>
   </div>
 </template>
 
 <script>
 import { reqAllAttributeData } from "@/api";
 import { mapActions, mapState, mapGetters } from "vuex";
+import ProductInfoDialog from "./productInfoDialog";
 const columns = [
   {
     width: 100,
@@ -54,7 +59,7 @@ const columns = [
     key: "productName",
     align: "center"
   },
-    {
+  {
     width: 100,
     // fixed: "left",
     title: "适用车型",
@@ -118,6 +123,13 @@ const columns = [
     key: "tankMaterial",
     align: "center"
   },
+    {
+    width: 100,
+    title: "水室尺寸",
+    dataIndex: "waterChamberSize",
+    key: "waterChamberSize",
+    align: "center"
+  },
   {
     width: 100,
     title: "蕊体尺寸",
@@ -148,34 +160,10 @@ const columns = [
     align: "center"
   }
 ];
-
-const data = [];
-for (let i = 0; i < 100; i++) {
-  data.push({
-    operation: i,
-    automobileInformationId: i,
-    beginningYear: i,
-    cylinderNumber: i,
-    displacement: i,
-    endYear: i,
-    gearPosition: i,
-    id: i,
-    jiMaoNumber: i,
-    oenumber: i,
-    pistil: i,
-    pistilSize: i,
-    productId: i,
-    productName: i,
-    seriesName: i,
-    tankMaterial: i,
-    vehicleName: i,
-    waterChamberSize: i,
-    waveformHeight: i
-  });
-}
 export default {
   data() {
     return {
+      showDataToChild: {},
       columns
     };
   },
@@ -201,15 +189,15 @@ export default {
         })
       };
     },
-    pagination:{
+    pagination: {
       get() {
         return {
-          defaultPageSize: 1,
+          defaultPageSize: 10,
           size: "middle",
           position: "top",
           // showSizeChanger:true,
           total: this.allAttributeInfo.total || 1,
-          onChange:this.changePage
+          onChange: this.changePage
         };
       }
     }
@@ -220,24 +208,29 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getProductAttributeInfo",'updateCurrentAttributeInfoPage']),
+    ...mapActions([
+      "getProductAttributeInfo",
+      "updateCurrentAttributeInfoPage"
+    ]),
     // 改变页码的回调
-    changePage(page){
-      let {allAttributeInfo} = this
-      if(!allAttributeInfo[page]){
-        this.getProductAttributeInfo({page,size:1})
-      }else{
-        this.updateCurrentAttributeInfoPage(page)
+    changePage(page) {
+      let { allAttributeInfo } = this;
+      if (!allAttributeInfo[page]) {
+        this.getProductAttributeInfo({ page, size: 1 });
+      } else {
+        this.updateCurrentAttributeInfoPage(page);
       }
-
-      console.log(page)
+    },
+    // 清空传递的信息
+    clearProductInfoToChild() {
+      this.showDataToChild = {};
     },
     onSearch(value) {
       console.log(value);
     }
   },
 
-  components: {}
+  components: {ProductInfoDialog}
 };
 </script>
 <style lang='stylus' scoped>

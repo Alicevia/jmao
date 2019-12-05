@@ -15,13 +15,20 @@ export default {
     let { data: { total, list }, page } = payload
     allAttributeInfo[page] = list
     allAttributeInfo.total = total
-    currentAttributeInfoPage = page
+    state.currentAttributeInfoPage = page
     state.allAttributeInfo = JSON.parse(JSON.stringify(allAttributeInfo))
   },
   // 更新产品展示页面的页数
   [TYPES.UPDATE_CURRENT_ATTRIBUTE_INFO_PAGE](state, page) {
     state.currentAttributeInfoPage = page
   },
+  
+
+
+
+
+
+
   // 添加产品页面-----------------
   //获取产品信息
   [TYPES.GET_PRODUCT_INFO](state,payload){
@@ -44,6 +51,20 @@ export default {
     })
     state.productInfo = productInfo
   },
+  // 删除产品信息
+  [TYPES.DELETE_PRODUCT_INFO](state,payload){
+    let {productInfo} = state
+    let i = null
+     productInfo.forEach((item,index)=>{
+      if (item.id===payload.id) {
+        i=index
+      }
+    })
+    productInfo.splice(i,1)
+    state.productInfo = productInfo
+  },
+
+
 
   // 车系车型添加页面
   [TYPES.UPDATE_CAR_SERIES_VEHICLE_INFO](state, payload) {

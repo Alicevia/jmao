@@ -9,6 +9,29 @@ export const reqAllAttributeData=(data)=>{
     flag:true
   })
 }
+// 添加产品属性
+export const reqAddAttributeData=(data)=>{
+  return axios({
+    url:'edit/addAutomobileAttribute',
+    data,
+    method:'post',
+  })
+}
+// 删除属性信息
+export const reqDeleteAttributeData = (data)=>axios({
+  url:'edit/batchDeleteAttribute',
+  method:'delete',
+  data,
+  flag:false
+})
+
+// 删除属性信息
+export const reqModiAttributeData = (data)=>axios({
+  url:'edit/updateAutomobileAttribute',
+  method:'post',
+  data,
+})
+
 
 // 获取产品信息
 export const reqAllProductInfo = ()=>axios({
@@ -25,7 +48,10 @@ export const reqAddProductCategory=(data)=>axios({
 })
 //删除产品信息
 export const reqDeleteProductCategory = data=>axios({
-  url:''
+  url:`edit/deleteProduct`,
+  data,
+  method:'delete',
+  flag:true
 })
 // 修改产品信息
 export const reqModiProductCategory = data=>axios({

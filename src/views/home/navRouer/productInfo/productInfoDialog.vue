@@ -11,6 +11,7 @@
       :keyboard="false"
       :afterClose="closeCallBack"
       :destroyOnClose="true"
+      :bodyStyle="{height:'500px'}"
     >
       <div id="components-form-demo-advanced-search">
         <a-form class="ant-advanced-search-form" :form="form">
@@ -18,30 +19,77 @@
             <a-col
               v-for="(item,index) in formItem"
               :key="index"
+              style="height:60px"
               :span="8"
               :style="{ display:item[0]!=='id'?'block':'none'}"
             >
-            
               <a-form-item
                 :label="item[1]"
                 :label-col="formItemLayout.labelCol"
                 :wrapper-col="formItemLayout.wrapperCol"
                 v-if="!(showDataToChild.id&&item[0]==='id')"
               >
-              <template v-if="item[0]==='automobileInformationId'">
-                 <a-cascader :options="options" @change="onChange" placeholder="Please select" />
-              </template>
-              <template v-else-if="item[0]==='productId'">
-                 <a-cascader :options="options" @change="onChange" placeholder="Please select" />
-
-              </template>
-               
-              <a-input v-else  v-decorator="[item[0],{rules: [
-                  {required: true,message: '请输入相关信息',}],
+                <template v-if="item[0]==='automobileInformationId'">
+                  <a-cascader
+                    v-decorator="['automobileInformationId',{rules: [
+                  {required: true,message: '请选择车型车系',}],
+                initialValue:undefined}]"
+                    :options="cascaderData"
+                    @change="onChange"
+                    :fieldNames="{ label: 'seriesName', value: 'id', children: 'vehicleResponseList' }"
+                    placeholder="请选择车型车系"
+                  />
+                </template>
+                <template v-else-if="item[0]==='productId'">
+                  <a-select
+                    v-decorator="['productId',{rules: [
+                  {required: true,message: '请选择产品'}],
+                initialValue:undefined}]"
+                    style="width: 178px"
+                    @change="handleChange"
+                    placeholder="请选择产品"
+                  >
+                    <a-select-option v-for="item in productInfo" :key="item.id">{{item.productName}}</a-select-option>
+                  </a-select>
+                </template>
+                <template v-else-if="item[0]==='gearPosition'">
+                  <a-select
+                    v-decorator="['gearPosition',{rules: [
+                  {required: true,message: '请选择手自动挡'}],
+                initialValue:undefined}]"
+                    size="default"
+                    style="width: 178px"
+                    placeholder="请选择手自动挡"
+                  >
+                    <a-select-option v-for="i in [0,1]" :key="i" :value="i">{{i===0?'自动':'手动'}}</a-select-option>
+                  </a-select>
+                </template>
+                <template v-else-if="item[0]==='beginningYear'||item[0]==='endYear'">
+                  <a-input
+                    v-decorator="[item[0],{rules: [
+                  {required: true, message:`请输入${item[1]}`},
+                   { pattern:new RegExp('^[0-9]{4}$','g'),message:'请输入4位数字的年份'}
+                  ],
+                  initialValue:''}]"
+                    :placeholder="`请输入${item[1]}`"
+                  />
+                </template>
+                <template v-else-if="item[0]==='file'">
+                  <PicUpload
+                    @getUploadImg="getUploadImg"
+                    v-decorator="['file',
+                  { rules: [{ required: false,
+                   message: '请上传图片' }] }]"
+                    :picture="pictureToChild"
+                  ></PicUpload>
+                </template>
+                <a-input
+                  v-else
+                  v-decorator="[item[0],{rules: [
+                  {required: false,message: `请输入${item[1]}`,}],
                 initialValue:''}]"
-                :placeholder="`请输入${item[1]}`"
-              />
-
+                  :placeholder="`请输入${item[1]}`"
+                />
               </a-form-item>
             </a-col>
           </a-row>
@@ -68,45 +116,45 @@ export default {
         labelCol: { span: 8 },
         wrapperCol: { span: 15 }
       },
-       options: [
-          {
-            value: 'zhejiang',
-            label: 'Zhejiang',
-            children: [
-              {
-                value: 'hangzhou',
-                label: 'Hangzhou',
-                children: [
-                  {
-                    value: 'xihu',
-                    label: 'West Lake',
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            value: 'jiangsu',
-            label: 'Jiangsu',
-            children: [
-              {
-                value: 'nanjing',
-                label: 'Nanjing',
-                children: [
-                  {
-                    value: 'zhonghuamen',
-                    label: 'Zhong Hua Men',
-                  },
-                ],
-              },
-            ],
-          },
-        ],
+      options: [
+        {
+          value: "zhejiang",
+          label: "Zhejiang",
+          children: [
+            {
+              value: "hangzhou",
+              label: "Hangzhou",
+              children: [
+                {
+                  value: "xihu",
+                  label: "West Lake"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          value: "jiangsu",
+          label: "Jiangsu",
+          children: [
+            {
+              value: "nanjing",
+              label: "Nanjing",
+              children: [
+                {
+                  value: "zhonghuamen",
+                  label: "Zhong Hua Men"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     };
   },
 
   computed: {
-    ...mapState(["activePath", "allCarSeries", "currentCarSeriesPage"]),
+    ...mapState(["activePath", "productInfo", "allSeriesVhicleInfo"]),
     visible: {
       get() {
         return "/home/productinfo" === this.activePath ? true : false;
@@ -114,11 +162,9 @@ export default {
     },
     formItem() {
       let formItem = {
-        automobileInformationId: "车型车系ID",
-        productId: "产品ID",
-
+        automobileInformationId: "车系名称",
+        productId: "产品名称",
         applicableVehicleType: "适用车型",
-
         beginningYear: "起始年份",
         cylinderNumber: "气缸数",
         displacement: "排量",
@@ -131,29 +177,49 @@ export default {
         pistilSize: "蕊体尺寸",
         tankMaterial: "水箱材质",
         waterChamberSize: "水室尺寸",
-        waveformHeight: "波高"
+        waveformHeight: "波高",
+        file: "产品详图"
       };
       formItem = Object.entries(formItem);
-      console.log(formItem);
       return formItem;
     },
+    cascaderData() {
+      let allSeriesVhicleInfo = this.allSeriesVhicleInfo[1] || [];
+      allSeriesVhicleInfo = allSeriesVhicleInfo
+        .map(item => {
+          if (item.vehicleResponseList) {
+            item.vehicleResponseList.forEach(value => {
+              value.seriesName = value.vehicleName;
+            });
+          }
+          return item;
+        })
+        .filter(item => {
+          return item.vehicleResponseList;
+        });
+      return allSeriesVhicleInfo;
+    },
+
     // 给upload的图片属性
     pictureToChild() {
-      return this.showDataToChild.seriesPic || this.showDataToChild.vehiclePic;
+      return this.showDataToChild.attributePic;
     }
   },
   created() {
-    this.getAllCarSeries();
+    this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
+    this.getProductInfo();
   },
+  mounted() {},
 
   methods: {
     ...mapActions([
       "modiActivePath",
-      "addCarSeriesOrVehicle",
-      "modiCarSeriesOrVehicle",
-      "getAllCarSeries",
-      "getCarSeriesVehicleInfo"
+      "getProductInfo",
+      "addProductAttributeInfo",
+      "getCarSeriesVehicleInfo",
+      'modiProductAttributeInfo'
     ]),
+
     // 获取到upload中的图片信息
     getUploadImg(img) {
       this.img = img;
@@ -165,14 +231,18 @@ export default {
     // 关闭之后的回调
     closeCallBack() {
       // 清空表单
-      console.log("--");
+      // console.log("--");
       this.form.resetFields();
       this.$emit("clearCarInfoToChild");
     },
-
-     onChange(value) {
-        console.log(value);
-      },
+    // 车系车系选择回调
+    onChange(value) {
+      // console.log(value);
+    },
+    // 产品选择回调
+    handleChange(value) {
+      // console.log(`Selected: ${value}`);
+    },
 
     // 弹窗的确定按钮
     handleOk(e) {
@@ -182,7 +252,8 @@ export default {
       }
       this.form.validateFields((err, values) => {
         if (!err) {
-          let formdata = new FormData();
+          values.automobileInformationId = values.automobileInformationId[1];
+          let formdata = new  FormData
           for (const key in values) {
             if (!values.hasOwnProperty(key)) return;
             if (key === "file" && !values["file"]) {
@@ -190,22 +261,16 @@ export default {
             }
             formdata.append([key], values[key]);
           }
+          console.log(values)
           if (this.showDataToChild.id) {
-            formdata.append("id", this.showDataToChild.id);
-            console.log(values, formdata);
-            this.modiCarSeriesOrVehicle(formdata).then(() => {
-              this.modiActivePath("");
-              this.getCarSeriesVehicleInfo({
-                page: this.currentCarSeriesPage,
-                size: 10
-              });
-            });
-          } else {
-            this.addCarSeriesOrVehicle(formdata).then(() => {
-              this.modiActivePath("");
-              this.getAllCarSeries();
-            });
+              this.modiProductAttributeInfo(formdata)
+              this.modiActivePath('')
+          }else{       
+            this.addProductAttributeInfo(formdata);
+            this.modiActivePath('')
+
           }
+   
         }
       });
     },
@@ -223,6 +288,7 @@ export default {
 <style lang='stylus' scoped>
 .ant-advanced-search-form
   padding 24px
+  padding-bottom 80px
   background #fbfbfb
   border 1px solid #d9d9d9
   border-radius 6px

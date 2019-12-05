@@ -97,10 +97,11 @@ export default {
   mounted() {},
 
   methods: {
-    ...mapActions(["getProductInfo",'modiActivePath']),
+    ...mapActions(["getProductInfo",'modiActivePath','deleteProductInfo']),
     // 删除产品信息
     onDelete(item) {
-
+      this.deleteProductInfo({id:item.id})
+      console.log(item)
       // this.dataSource = dataSource.filter(item => item.key !== key);
     },
     // 修改产品信息

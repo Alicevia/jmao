@@ -13,15 +13,16 @@
     <a-table
       :rowSelection="rowSelection"
       :columns="columns"
-      :scroll="{x:1960}"
+      :scroll="{x:2060}"
       rowKey="id"
       :pagination="pagination"
       :dataSource="showProductAttribute"
     >
       <template slot="action" slot-scope="item">
-        <a-button type="link" size="small">修改</a-button>&nbsp;
-        <a-button type="danger" size="small">删除</a-button>
+        <a-button type="link" size="small" @click="changeAttribute(item)">修改</a-button>&nbsp;
+        <a-button type="danger" size="small" @click="deleteAttribute(item)">删除</a-button>
       </template>
+      <img :style="pic" slot="attributePic" slot-scope="item" :src="item" alt />
     </a-table>
     <ProductInfoDialog
       @clearProductInfoToChild="clearProductInfoToChild"
@@ -58,6 +59,14 @@ const columns = [
     dataIndex: "productName",
     key: "productName",
     align: "center"
+  },
+  {
+    width: 100,
+    title: "产品详图",
+    dataIndex: "attributePic",
+    key: "attributePic",
+    align: "center",
+    scopedSlots: { customRender: "attributePic" }
   },
   {
     width: 100,
@@ -123,7 +132,7 @@ const columns = [
     key: "tankMaterial",
     align: "center"
   },
-    {
+  {
     width: 100,
     title: "水室尺寸",
     dataIndex: "waterChamberSize",
@@ -164,12 +173,20 @@ export default {
   data() {
     return {
       showDataToChild: {},
-      columns
+      columns,
+      pic: {
+        display: "inline-block",
+        height: "50px"
+      }
     };
   },
 
   computed: {
-    ...mapState(["allAttributeInfo", "currentAttributeInfoPage"]),
+    ...mapState([
+      "allAttributeInfo",
+      "currentAttributeInfoPage",
+      "allSeriesVhicleInfo"
+    ]),
     ...mapGetters(["showProductAttribute"]),
     rowSelection() {
       const { selectedRowKeys } = this;
@@ -209,14 +226,48 @@ export default {
 
   methods: {
     ...mapActions([
+      'modiActivePath',
       "getProductAttributeInfo",
-      "updateCurrentAttributeInfoPage"
+      "updateCurrentAttributeInfoPage",
+      "deleteProductAttributeInfo"
     ]),
+    // 删除某些属性
+    deleteAttribute(item) {
+      // console.log(item.id)
+      // body 不需要字段
+      this.deleteProductAttributeInfo([item.id]).then(() => {
+        this.getProductAttributeInfo({
+          page: this.currentAttributeInfoPage,
+          size: 10
+        });
+      });
+    },
+    // 修改某条属性
+    changeAttribute(item) {
+      console.log(item);
+      let automobileInformationId = [];
+      let allSeriesVhicleInfo = this.allSeriesVhicleInfo[1] || [];
+      let allVhicleInfo = [];
+      allSeriesVhicleInfo.forEach(value => {
+        if (value.vehicleResponseList) {
+          allVhicleInfo = allVhicleInfo.concat(value.vehicleResponseList);
+        }
+      });
+      allVhicleInfo.forEach(values => {
+        if (values.id === item.automobileInformationId) {
+          automobileInformationId.push(values.parentId, values.id);
+        }
+      });
+      item.automobileInformationId = automobileInformationId;
+      this.showDataToChild = item;
+      this.modiActivePath(this.$route.path)
+      console.log(item);
+    },
     // 改变页码的回调
     changePage(page) {
       let { allAttributeInfo } = this;
       if (!allAttributeInfo[page]) {
-        this.getProductAttributeInfo({ page, size: 1 });
+        this.getProductAttributeInfo({ page, size: 10 });
       } else {
         this.updateCurrentAttributeInfoPage(page);
       }
@@ -230,7 +281,7 @@ export default {
     }
   },
 
-  components: {ProductInfoDialog}
+  components: { ProductInfoDialog }
 };
 </script>
 <style lang='stylus' scoped>

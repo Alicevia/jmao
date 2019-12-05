@@ -22,10 +22,13 @@ export default {
   },
 
   computed: {},
-
+  created(){
+    
+  },
   mounted() {},
 
-  methods: {},
+  methods: {
+  },
 
   components: { Sider, Footer, Header }
 };

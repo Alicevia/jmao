@@ -7,8 +7,8 @@ export default {
   //     commit(TYPES.RECEIVE_USER_INFO,{userInfo})
   // },
   // 显示当前的path
-  modiActivePath({commit},payload){
-    commit(TYPES.MODI_ACTIVE_PATH,payload)
+  modiActivePath({ commit }, payload) {
+    commit(TYPES.MODI_ACTIVE_PATH, payload)
   },
   // 获取每一页的产品属性信息并存储
   async getProductAttributeInfo({ commit }, payload) {
@@ -25,44 +25,92 @@ export default {
       message.error('获取所有属性信息失败')
     }
   },
+  // 添加产品属性信息
+  async addProductAttributeInfo({ commit }, payload) {
+    let { data: { succeed, data } } = await allReq.reqAddAttributeData(payload)
+    if (succeed) {
+      console.log(data)
+      message.success('添加信息成功')
+      // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
+    } else {
+      message.error('添加信息失败')
+    }
+  },
+  // 删除产品属性
+  async deleteProductAttributeInfo({ commit }, payload) {
+    let { data: { succeed, data } } = await allReq.reqDeleteAttributeData(payload)
+    if (succeed) {
+      console.log(data)
+      message.success('删除属性信息成功')
+
+      // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
+    } else {
+      message.error('删除属性信息失败')
+    }
+  },
+    // 修改产品属性
+    async modiProductAttributeInfo({ commit }, payload) {
+      let { data: { succeed, data } } = await allReq.reqModiAttributeData(payload)
+      if (succeed) {
+        console.log(data)
+        message.success('修改属性信息成功')
+        
+        // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
+      } else {
+        message.error('修改属性信息失败')
+      }
+    },
+
+
   // 修改当前显示的属性页码
   updateCurrentAttributeInfoPage({ commit }, page) {
     commit(TYPES.UPDATE_CURRENT_ATTRIBUTE_INFO_PAGE, page)
   },
 
   // 产品添加页面 -----------------------
-
   // 获取产品
   async getProductInfo({ commit }) {
-    let {  data:{succeed,data} } = await allReq.reqAllProductInfo()
+    let { data: { succeed, data } } = await allReq.reqAllProductInfo()
     // console.log(data)
     if (succeed) {
-      commit(TYPES.GET_PRODUCT_INFO,data)
-    }else{
+      commit(TYPES.GET_PRODUCT_INFO, data)
+    } else {
       message.error('获取产品信息失败')
     }
   },
+
   // 添加产品信息
-  async addProductInfo({commit},payload){
-    let {data:{succeed,data}} = await allReq.reqAddProductCategory(payload)
+  async addProductInfo({ commit }, payload) {
+    let { data: { succeed, data } } = await allReq.reqAddProductCategory(payload)
     if (succeed) {
       message.success('产品添加成功')
-      commit(TYPES.ADD_PRODUCT_INFO,data)
-    }else{
+      commit(TYPES.ADD_PRODUCT_INFO, data)
+    } else {
       message.error('产品添加失败，请刷新页面')
     }
   },
   // 修改产品信息
-  async modiProductInfo({commit},payload){
-    let {data:{succeed,data}} = await allReq.reqModiProductCategory(payload)
+  async modiProductInfo({ commit }, payload) {
+    let { data: { succeed, data } } = await allReq.reqModiProductCategory(payload)
     if (succeed) {
       message.success('修改产品信息成功')
-      commit(TYPES.MODI_PRODUCT_INFO,data)
-    }else{
+      commit(TYPES.MODI_PRODUCT_INFO, data)
+    } else {
       message.error('修改产品信息失败')
     }
   },
 
+  // 删除产品信息
+  async deleteProductInfo({ commit }, payload) {
+    let { data: { succeed, data } } = await allReq.reqDeleteProductCategory(payload)
+    if (succeed) {
+      console.log(data)
+      message.success('删除产品信息成功')
+      commit(TYPES.DELETE_PRODUCT_INFO, payload)
+    } else {
+      message.error('删除产品信息失败')
+    }
+  },
 
 
 
@@ -87,39 +135,39 @@ export default {
     commit(TYPES.UPDATE_CAE_SERIES_VEHICLE_PAGE, page)
   },
   // 获取全部车系
-  async getAllCarSeries({commit}){
+  async getAllCarSeries({ commit }) {
     let { data: { succeed, data } } = await allReq.reqAllCarSeries()
     if (succeed) {
-      commit(TYPES.GET_ALL_CAR_SERIES,data)
+      commit(TYPES.GET_ALL_CAR_SERIES, data)
     }
   },
   // 添加车系车系
-  async addCarSeriesOrVehicle({commit},payload){
+  async addCarSeriesOrVehicle({ commit }, payload) {
     let { data: { succeed, data } } = await allReq.reqAddCarCarSeriesVehicle(payload)
     if (succeed) {
       message.success('添加车系车型成功')
       // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
-    }else{
+    } else {
       message.error('添加车系车型失败')
     }
   },
   // 修改车型车系
-  async modiCarSeriesOrVehicle({commit},payload){
+  async modiCarSeriesOrVehicle({ commit }, payload) {
     let { data: { succeed, data } } = await allReq.reqModiCarCarSeriesVehicle(payload)
     if (succeed) {
       message.success('修改车系车型成功')
       // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
-    }else{
+    } else {
       message.error('修改车系车型失败')
     }
   },
   // 删除车型车系
-  async deleteCarSeriesOrVehicle({commit},payload){
+  async deleteCarSeriesOrVehicle({ commit }, payload) {
     let { data: { succeed, data } } = await allReq.reqDeleteCarSeriesVehicle(payload)
     if (succeed) {
       message.success('删除车系车型成功')
       // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
-    }else{
+    } else {
       message.error('删除车系车型失败')
     }
   },

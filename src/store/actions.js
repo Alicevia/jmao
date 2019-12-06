@@ -6,6 +6,21 @@ export default {
 
   //     commit(TYPES.RECEIVE_USER_INFO,{userInfo})
   // },
+  // 验证是否登陆
+  async changeLogin({commit},payload){
+    let {data:{succeed,data}} = await allReq.login(payload)
+    if (data) {
+      message.success('登陆成功，欢迎上线')
+      localStorage.setItem('login',true)
+      commit(TYPES.CHANGE_LOGIN)
+    }else{
+      message.error('用户名或者密码错误')
+    }
+  },
+  changeLogout({commit}){
+    commit(TYPES.CHANGE_LOGOUT)
+    message.success('退出成功')
+  },
   // 显示当前的path
   modiActivePath({ commit }, payload) {
     commit(TYPES.MODI_ACTIVE_PATH, payload)
@@ -42,24 +57,21 @@ export default {
     if (succeed) {
       console.log(data)
       message.success('删除属性信息成功')
-
-      // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
     } else {
       message.error('删除属性信息失败')
     }
   },
-    // 修改产品属性
-    async modiProductAttributeInfo({ commit }, payload) {
-      let { data: { succeed, data } } = await allReq.reqModiAttributeData(payload)
-      if (succeed) {
-        console.log(data)
-        message.success('修改属性信息成功')
-        
-        // commit(TYPES.ADD_CAR_SERIES_VEHICLE_INFO,data)
-      } else {
-        message.error('修改属性信息失败')
-      }
-    },
+  // 修改产品属性
+  async modiProductAttributeInfo({ commit }, payload) {
+    let { data: { succeed, data } } = await allReq.reqModiAttributeData(payload)
+    if (succeed) {
+      console.log('--',data)
+      message.success('修改属性信息成功')
+      // commit(TYPES.MODI_PRODUCT_ATTRIBUTE_INFO,data)
+    } else {
+      message.error('修改属性信息失败')
+    }
+  },
 
 
   // 修改当前显示的属性页码
@@ -120,11 +132,17 @@ export default {
   async getCarSeriesVehicleInfo({ commit }, payload) {
     let { page } = payload
     let { data: { succeed, data } } = await allReq.reqCarSeriesVehicleInfo(payload)
+    console.log(data)
     if (succeed) {
       if (data.total === 0) {
         message.warning('车系车型数据为空')
         return
       }
+     if (data.total/10 < page) {
+      page = page-1
+      commit(TYPES.UPDATE_CAR_SERIES_VEHICLE_INFO, { data, page })
+      return
+     }
       commit(TYPES.UPDATE_CAR_SERIES_VEHICLE_INFO, { data, page })
     } else {
       message.error('获取车系车型信息失败')

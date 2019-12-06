@@ -102,6 +102,7 @@ export default {
             });
           } else {
             this.addProductInfo(formdata).then(() => {
+              
               this.modiActivePath("");
             });
           }

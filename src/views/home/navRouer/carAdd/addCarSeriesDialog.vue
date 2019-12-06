@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-modal
-      :title="showDataToChild.id?'车系车型添加':'车系车型修改'"
+      :title="showDataToChild.id?'车系车型修改':'车系车型添加'"
       :visible="visible"
       @ok="handleOk"
       :confirmLoading="confirmLoading"
@@ -130,12 +130,13 @@ export default {
                 page: this.currentCarSeriesPage,
                 size: 10
               });
-              
+      
             });
           } else {
             this.addCarSeriesOrVehicle(formdata).then(() => {
               this.modiActivePath("");
               this.getAllCarSeries();
+              this.getCarSeriesVehicleInfo()
             });
           }
         }

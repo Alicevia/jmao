@@ -1,6 +1,13 @@
 // import axios from '../axios'
 import {axios,ajax} from '../config/axios'
 
+
+export const login = (data)=>axios({
+  url:'user/login',
+  data,
+  method:'post',
+  flag:true
+})
 // 获取全部属性信息
 export const reqAllAttributeData=(data)=>{
   return axios({

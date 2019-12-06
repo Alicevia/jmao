@@ -8,6 +8,18 @@ export default {
   [TYPES.MODI_ACTIVE_PATH](state,payload){
     state.activePath = payload
   },
+
+  [TYPES.CHANGE_LOGIN](state){
+    state.login = true
+  },
+  [TYPES.CHANGE_LOGOUT](state){
+    state.login = false
+  },
+
+
+
+
+
   // 产品信息页面
   // 获取每一页的产品属性信息并存储
   [TYPES.UPDATE_PRODUCT_ATTRIBUTE_INFO](state, payload) {
@@ -22,7 +34,16 @@ export default {
   [TYPES.UPDATE_CURRENT_ATTRIBUTE_INFO_PAGE](state, page) {
     state.currentAttributeInfoPage = page
   },
-  
+  [TYPES.MODI_PRODUCT_ATTRIBUTE_INFO](state,payload){
+    let {allAttributeInfo,currentAttributeInfoPage} = state
+    allAttributeInfo[currentAttributeInfoPage].forEach((item,index)=>{
+      if (item.id===payload.id) {
+        allAttributeInfo[currentAttributeInfoPage][index]  = payload
+      }
+      
+    })
+    state.allAttributeInfo = JSON.parse(JSON.stringify(allAttributeInfo))
+  },
 
 
 
@@ -72,7 +93,7 @@ export default {
     let { data: { total, list }, page } = payload
     allSeriesVhicleInfo[page] = list
     allSeriesVhicleInfo.total = total
-    currentCarSeriesPage = page
+    state.currentCarSeriesPage = page
     state.allSeriesVhicleInfo = JSON.parse(JSON.stringify(allSeriesVhicleInfo))
   },
   // 所有的车系信息

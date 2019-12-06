@@ -2,7 +2,7 @@
   <div>
     <a-table
       :columns="columns"
-      :scroll="{x:1000}"
+      :scroll="{x:1000,y:550}"
       :bordered="true"
       rowKey="id"
       :pagination="pagination"

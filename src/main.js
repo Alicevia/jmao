@@ -19,7 +19,9 @@ Vue.use(Popconfirm)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Cascader)
-
+if (localStorage.getItem('login')) {
+  store.state.login = true
+}
 Vue.config.productionTip = false
 new Vue({
   router,

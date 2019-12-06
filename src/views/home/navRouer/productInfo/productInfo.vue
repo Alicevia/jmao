@@ -11,9 +11,10 @@
       </a-input-search>
     </div>
     <a-table
+      :style="{ wordBreak: 'break-all' }"
       :rowSelection="rowSelection"
       :columns="columns"
-      :scroll="{x:2060}"
+      :scroll="{x:2400,y:550}"
       rowKey="id"
       :pagination="pagination"
       :dataSource="showProductAttribute"
@@ -21,6 +22,9 @@
       <template slot="action" slot-scope="item">
         <a-button type="link" size="small" @click="changeAttribute(item)">修改</a-button>&nbsp;
         <a-button type="danger" size="small" @click="deleteAttribute(item)">删除</a-button>
+      </template>
+      <template slot="gearPosition" slot-scope="item">
+        <span>{{automatic(item)}}</span>
       </template>
       <img :style="pic" slot="attributePic" slot-scope="item" :src="item" alt />
     </a-table>
@@ -35,6 +39,7 @@
 import { reqAllAttributeData } from "@/api";
 import { mapActions, mapState, mapGetters } from "vuex";
 import ProductInfoDialog from "./productInfoDialog";
+import bus from "@/utils/bus";
 const columns = [
   {
     width: 100,
@@ -53,7 +58,7 @@ const columns = [
     align: "center"
   },
   {
-    width: 100,
+    width: 150,
     fixed: "left",
     title: "产品名",
     dataIndex: "productName",
@@ -61,7 +66,7 @@ const columns = [
     align: "center"
   },
   {
-    width: 100,
+    width: 120,
     title: "产品详图",
     dataIndex: "attributePic",
     key: "attributePic",
@@ -69,22 +74,21 @@ const columns = [
     scopedSlots: { customRender: "attributePic" }
   },
   {
-    width: 100,
-    // fixed: "left",
+    width: 250,
     title: "适用车型",
     dataIndex: "applicableVehicleType",
     key: "applicableVehicleType",
     align: "center"
   },
   {
-    width: 100,
+    width: 300,
     title: "OE号",
     dataIndex: "oenumber",
     key: "oenumber",
     align: "center"
   },
   {
-    width: 120,
+    width: 100,
     title: "吉茂品号",
     dataIndex: "jiMaoNumber",
     key: "jiMaoNumber",
@@ -123,7 +127,8 @@ const columns = [
     title: "自动/手动",
     dataIndex: "gearPosition",
     key: "gearPosition",
-    align: "center"
+    align: "center",
+    scopedSlots: { customRender: "gearPosition" }
   },
   {
     width: 100,
@@ -192,11 +197,7 @@ export default {
       const { selectedRowKeys } = this;
       return {
         onChange: (selectedRowKeys, selectedRows) => {
-          console.log(
-            `selectedRowKeys: ${selectedRowKeys}`,
-            "selectedRows: ",
-            selectedRows
-          );
+          bus.$emit("transportDeleteAry", selectedRowKeys);
         },
         getCheckboxProps: record => ({
           props: {
@@ -217,6 +218,21 @@ export default {
           onChange: this.changePage
         };
       }
+    },
+    automatic(i) {
+      return i => {
+        switch (i) {
+          case 0:
+            return "自动挡";
+            break;
+          case 1:
+            return "手动挡";
+            break;
+          default:
+            return "手自动一体";
+            break;
+        }
+      };
     }
   },
 
@@ -226,7 +242,7 @@ export default {
 
   methods: {
     ...mapActions([
-      'modiActivePath',
+      "modiActivePath",
       "getProductAttributeInfo",
       "updateCurrentAttributeInfoPage",
       "deleteProductAttributeInfo"
@@ -244,7 +260,6 @@ export default {
     },
     // 修改某条属性
     changeAttribute(item) {
-      console.log(item);
       let automobileInformationId = [];
       let allSeriesVhicleInfo = this.allSeriesVhicleInfo[1] || [];
       let allVhicleInfo = [];
@@ -260,8 +275,7 @@ export default {
       });
       item.automobileInformationId = automobileInformationId;
       this.showDataToChild = item;
-      this.modiActivePath(this.$route.path)
-      console.log(item);
+      this.modiActivePath(this.$route.path);
     },
     // 改变页码的回调
     changePage(page) {
@@ -274,7 +288,9 @@ export default {
     },
     // 清空传递的信息
     clearProductInfoToChild() {
+      
       this.showDataToChild = {};
+      console.log(this.showDataToChild)
     },
     onSearch(value) {
       console.log(value);

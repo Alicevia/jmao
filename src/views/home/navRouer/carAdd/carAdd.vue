@@ -2,7 +2,7 @@
   <div>
     <a-table
       :columns="columns"
-      :scroll="{x:1000}"
+      :scroll="{x:1000,y:550}"
       rowKey="id"
       :childrenColumnName="'vehicleResponseList'"
       :bordered="true"
@@ -18,7 +18,7 @@
           :title="deleteTitle(record)"
           @confirm="() => onDelete(record)"
         >
-          <a-button type="danger" size="small">删除</a-button>
+          <a-button type="danger" size="small" >删除</a-button>
         </a-popconfirm>
       </template>
     </a-table>
@@ -111,9 +111,11 @@ export default {
       }
     }
   },
-  created() {},
-  mounted() {
+  created() {
     this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
+  },
+  mounted() {
+    
   },
 
   methods: {

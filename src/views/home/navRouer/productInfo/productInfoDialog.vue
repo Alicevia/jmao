@@ -27,13 +27,14 @@
                 :label="item[1]"
                 :label-col="formItemLayout.labelCol"
                 :wrapper-col="formItemLayout.wrapperCol"
-                v-if="!(showDataToChild.id&&item[0]==='id')"
+                v-if="item[0]==='id'? showDataToChild.id:true"
               >
                 <template v-if="item[0]==='automobileInformationId'">
                   <a-cascader
                     v-decorator="['automobileInformationId',{rules: [
                   {required: true,message: '请选择车型车系',}],
-                initialValue:undefined}]"
+                     initialValue:showDataToChild.automobileInformationId
+                     }]"
                     :options="cascaderData"
                     @change="onChange"
                     :fieldNames="{ label: 'seriesName', value: 'id', children: 'vehicleResponseList' }"
@@ -43,8 +44,9 @@
                 <template v-else-if="item[0]==='productId'">
                   <a-select
                     v-decorator="['productId',{rules: [
-                  {required: true,message: '请选择产品'}],
-                initialValue:undefined}]"
+                      {required: true,message: '请选择产品'}],
+                    initialValue:showDataToChild[item[0]]
+                    }]"
                     style="width: 178px"
                     @change="handleChange"
                     placeholder="请选择产品"
@@ -55,22 +57,25 @@
                 <template v-else-if="item[0]==='gearPosition'">
                   <a-select
                     v-decorator="['gearPosition',{rules: [
-                  {required: true,message: '请选择手自动挡'}],
-                initialValue:undefined}]"
+                      {required: true,message: '请选择手自动挡'}],
+                    initialValue:showDataToChild[item[0]]
+                    }]"
                     size="default"
                     style="width: 178px"
                     placeholder="请选择手自动挡"
                   >
-                    <a-select-option v-for="i in [0,1]" :key="i" :value="i">{{i===0?'自动':'手动'}}</a-select-option>
+                    <a-select-option v-for="i in [0,1,2]" :key="i" :value="i">{{automatic(i)}}</a-select-option>
                   </a-select>
                 </template>
                 <template v-else-if="item[0]==='beginningYear'||item[0]==='endYear'">
                   <a-input
-                    v-decorator="[item[0],{rules: [
-                  {required: true, message:`请输入${item[1]}`},
-                   { pattern:new RegExp('^[0-9]{4}$','g'),message:'请输入4位数字的年份'}
-                  ],
-                  initialValue:''}]"
+                    v-decorator="[item[0],{
+                      rules: [
+                      {required: true, message:`请输入${item[1]}`},
+                      { pattern:new RegExp('^[0-9]{4}$','g'),message:'请输入4位数字的年份'}
+                      ],
+                  initialValue:showDataToChild[item[0]]
+                  }]"
                     :placeholder="`请输入${item[1]}`"
                   />
                 </template>
@@ -78,18 +83,21 @@
                   <PicUpload
                     @getUploadImg="getUploadImg"
                     v-decorator="['file',
-                  { rules: [{ required: false,
-                   message: '请上传图片' }] }]"
+                  { 
+                    rules: [{ required: false,message: '请上传图片' }], 
+                    initialValue:showDataToChild.attributePic
+                    }]"
                     :picture="pictureToChild"
                   ></PicUpload>
                 </template>
-                <a-input
-                  v-else
-                  v-decorator="[item[0],{rules: [
-                  {required: false,message: `请输入${item[1]}`,}],
-                initialValue:''}]"
-                  :placeholder="`请输入${item[1]}`"
-                />
+                  <a-input
+                    v-else
+                    v-decorator="[item[0],{rules: [
+                        {required: false,message: `请输入${item[1]}`,}],
+                        initialValue: showDataToChild[item[0]]
+                      }]"
+                        :placeholder="`请输入${item[1]}`"
+                  />
               </a-form-item>
             </a-col>
           </a-row>
@@ -154,11 +162,27 @@ export default {
   },
 
   computed: {
-    ...mapState(["activePath", "productInfo", "allSeriesVhicleInfo"]),
+    ...mapState(["activePath", "productInfo", "allSeriesVhicleInfo",'currentAttributeInfoPage']),
     visible: {
       get() {
         return "/home/productinfo" === this.activePath ? true : false;
       }
+    },
+    // 手自动
+    automatic(i) {
+      return i => {
+        switch (i) {
+          case 0:
+            return "自动挡";
+            break;
+          case 1:
+            return "手动挡";
+            break;
+          default:
+            return "手自动一体";
+            break;
+        }
+      };
     },
     formItem() {
       let formItem = {
@@ -208,8 +232,13 @@ export default {
   created() {
     this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
     this.getProductInfo();
+
   },
   mounted() {},
+  activated(){
+    this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
+    this.getProductInfo();
+  },
 
   methods: {
     ...mapActions([
@@ -217,7 +246,8 @@ export default {
       "getProductInfo",
       "addProductAttributeInfo",
       "getCarSeriesVehicleInfo",
-      'modiProductAttributeInfo'
+      "modiProductAttributeInfo",
+      'getProductAttributeInfo'
     ]),
 
     // 获取到upload中的图片信息
@@ -231,9 +261,9 @@ export default {
     // 关闭之后的回调
     closeCallBack() {
       // 清空表单
-      // console.log("--");
+      console.log("--");
       this.form.resetFields();
-      this.$emit("clearCarInfoToChild");
+      this.$emit("clearProductInfoToChild");
     },
     // 车系车系选择回调
     onChange(value) {
@@ -253,24 +283,24 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           values.automobileInformationId = values.automobileInformationId[1];
-          let formdata = new  FormData
+          let formdata = new FormData();
           for (const key in values) {
             if (!values.hasOwnProperty(key)) return;
-            if (key === "file" && !values["file"]) {
+            if ((key === "file" && !values["file"])||values[key]===undefined) {
               continue;
             }
             formdata.append([key], values[key]);
           }
-          console.log(values)
+          console.log(values);
           if (this.showDataToChild.id) {
-              this.modiProductAttributeInfo(formdata)
-              this.modiActivePath('')
-          }else{       
+            this.modiProductAttributeInfo(formdata).then(()=>{
+              this.getProductAttributeInfo({page:this.currentAttributeInfoPage,size:10})
+            });
+            this.modiActivePath("");
+          } else {
             this.addProductAttributeInfo(formdata);
-            this.modiActivePath('')
-
+            this.modiActivePath("");
           }
-   
         }
       });
     },

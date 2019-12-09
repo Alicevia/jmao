@@ -3,8 +3,8 @@ function resolve(dir) {
   return path.join(__dirname, dir);
 }
 module.exports = {
-  // publicPath:'/jimao/',
-  publicPath:'./',
+  publicPath:'/jimao/',//history hash
+  // publicPath:'./',//hash
   chainWebpack: (config) => {
     config.resolve.alias
       .set('@', resolve('src'))

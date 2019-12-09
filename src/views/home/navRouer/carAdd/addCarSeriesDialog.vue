@@ -17,6 +17,7 @@
             v-decorator="['parentId',
             {initialValue:showDataToChild.parentId||0}]"
             @change="handleSelectChange"
+            :disabled='showDataToChild.parentId===0?true:false'
           >
             <a-select-option :value="0">默认为添加车系</a-select-option>
             <a-select-option
@@ -79,6 +80,7 @@ export default {
 
   },
   created() {
+    // 获取所有车系用来添加车型
     this.getAllCarSeries();
   },
 
@@ -101,11 +103,10 @@ export default {
     // 关闭之后的回调
     closeCallBack() {
       // 清空表单
-      console.log('--')
       this.form.resetFields();
       this.$emit("clearCarInfoToChild");
     },
-    // 弹窗的确定按钮
+    // 弹窗的确定按钮 添加或者是修改
     handleOk(e) {
       e.preventDefault();
       if (this.img) {
@@ -123,20 +124,16 @@ export default {
           }
           if (this.showDataToChild.id) {
             formdata.append("id", this.showDataToChild.id);
-            console.log(values,formdata)
             this.modiCarSeriesOrVehicle(formdata).then(() => {
               this.modiActivePath("");
-              this.getCarSeriesVehicleInfo({
-                page: this.currentCarSeriesPage,
-                size: 10
-              });
-      
+              this.getAllCarSeries();
+              this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
             });
           } else {
             this.addCarSeriesOrVehicle(formdata).then(() => {
               this.modiActivePath("");
               this.getAllCarSeries();
-              this.getCarSeriesVehicleInfo()
+              this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
             });
           }
         }

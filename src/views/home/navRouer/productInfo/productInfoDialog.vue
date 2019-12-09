@@ -67,7 +67,7 @@
                     <a-select-option v-for="i in [0,1,2]" :key="i" :value="i">{{automatic(i)}}</a-select-option>
                   </a-select>
                 </template>
-                <template v-else-if="item[0]==='beginningYear'||item[0]==='endYear'">
+                <template v-else-if="item[0]==='beginningYear'">
                   <a-input
                     v-decorator="[item[0],{
                       rules: [
@@ -90,14 +90,14 @@
                     :picture="pictureToChild"
                   ></PicUpload>
                 </template>
-                  <a-input
-                    v-else
-                    v-decorator="[item[0],{rules: [
+                <a-input
+                  v-else
+                  v-decorator="[item[0],{rules: [
                         {required: false,message: `请输入${item[1]}`,}],
                         initialValue: showDataToChild[item[0]]
                       }]"
-                        :placeholder="`请输入${item[1]}`"
-                  />
+                  :placeholder="`请输入${item[1]}`"
+                />
               </a-form-item>
             </a-col>
           </a-row>
@@ -162,7 +162,13 @@ export default {
   },
 
   computed: {
-    ...mapState(["activePath", "productInfo", "allSeriesVhicleInfo",'currentAttributeInfoPage']),
+    ...mapState([
+      "activePath",
+      "productInfo",
+      "allSeriesVhicleInfo",
+      "currentAttributeInfoPage",
+      'search'
+    ]),
     visible: {
       get() {
         return "/home/productinfo" === this.activePath ? true : false;
@@ -207,8 +213,10 @@ export default {
       formItem = Object.entries(formItem);
       return formItem;
     },
+    // 创建级联数据
     cascaderData() {
       let allSeriesVhicleInfo = this.allSeriesVhicleInfo[1] || [];
+      allSeriesVhicleInfo = JSON.parse(JSON.stringify(allSeriesVhicleInfo))
       allSeriesVhicleInfo = allSeriesVhicleInfo
         .map(item => {
           if (item.vehicleResponseList) {
@@ -232,10 +240,9 @@ export default {
   created() {
     this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
     this.getProductInfo();
-
   },
   mounted() {},
-  activated(){
+  activated() {
     this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
     this.getProductInfo();
   },
@@ -247,7 +254,7 @@ export default {
       "addProductAttributeInfo",
       "getCarSeriesVehicleInfo",
       "modiProductAttributeInfo",
-      'getProductAttributeInfo'
+      "getProductAttributeInfo"
     ]),
 
     // 获取到upload中的图片信息
@@ -261,7 +268,6 @@ export default {
     // 关闭之后的回调
     closeCallBack() {
       // 清空表单
-      console.log("--");
       this.form.resetFields();
       this.$emit("clearProductInfoToChild");
     },
@@ -286,15 +292,28 @@ export default {
           let formdata = new FormData();
           for (const key in values) {
             if (!values.hasOwnProperty(key)) return;
-            if ((key === "file" && !values["file"])||values[key]===undefined) {
+            if (
+              (key === "file" && !values["file"]) ||
+              values[key] === undefined
+            ) {
               continue;
             }
             formdata.append([key], values[key]);
           }
-          console.log(values);
           if (this.showDataToChild.id) {
-            this.modiProductAttributeInfo(formdata).then(()=>{
-              this.getProductAttributeInfo({page:this.currentAttributeInfoPage,size:10})
+            this.modiProductAttributeInfo(formdata).then(() => {
+              if (this.search) {
+                this.getProductAttributeInfo({
+                  page: this.currentAttributeInfoPage,
+                  size: 10,
+                  keywords: this.search
+                });
+              } else {
+                this.getProductAttributeInfo({
+                  page: this.currentAttributeInfoPage,
+                  size: 10
+                });
+              }
             });
             this.modiActivePath("");
           } else {

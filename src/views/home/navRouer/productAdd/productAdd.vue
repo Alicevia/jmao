@@ -119,6 +119,9 @@ export default {
 };
 </script>
 <style lang='stylus' scoped>
+/deep/ .ant-table-thead th
+  background-color rgba(33,98,185,.08)
+  color #555
 .car-add
   width 100%
   height 100%

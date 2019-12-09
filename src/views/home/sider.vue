@@ -4,7 +4,7 @@
      <img class="logo" src="@/assets/images/logo.png" alt="">
    </div>
    <div class="product-number">
-     <p >(500)</p>
+     <p >({{number}})</p>
      <p class="product">产品</p>
    </div>
    <Nav></Nav>
@@ -13,15 +13,24 @@
 
 <script>
 import Nav from 'home/nav'
+import { mapState } from 'vuex';
 export default {
   data () {
     return {
+      
     };
   },
 
-  computed: {},
+  computed: {
+    ...mapState(['allAttributeInfo']),
+    number(){
+      return this.allAttributeInfo.total||0
+    }
+  },
 
-  mounted(){},
+  mounted(){
+   
+  },
 
   methods: {},
 

@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 let instance1 = axios.create({
-  baseURL:'http://192.168.50.163:8082/api/',
-  // baseURL:'http://192.168.50.30:8082/api/',
+  // baseURL:'http://192.168.50.163:8082/api/',
+  baseURL:'http://www.cluster-dt.com/api',
   headers:{
     'content-type': 'application/json;charset=UTF-8 '
   },

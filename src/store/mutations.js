@@ -15,11 +15,10 @@ export default {
   [TYPES.CHANGE_LOGOUT](state){
     state.login = false
   },
-
-
-
-
-
+  [TYPES.SEARCH_FLAG](state,payload){
+    state.search = payload
+  },
+  
   // 产品信息页面
   // 获取每一页的产品属性信息并存储
   [TYPES.UPDATE_PRODUCT_ATTRIBUTE_INFO](state, payload) {
@@ -30,17 +29,18 @@ export default {
     state.currentAttributeInfoPage = page
     state.allAttributeInfo = JSON.parse(JSON.stringify(allAttributeInfo))
   },
+ 
   // 更新产品展示页面的页数
   [TYPES.UPDATE_CURRENT_ATTRIBUTE_INFO_PAGE](state, page) {
     state.currentAttributeInfoPage = page
   },
+  // 修改产品属性
   [TYPES.MODI_PRODUCT_ATTRIBUTE_INFO](state,payload){
     let {allAttributeInfo,currentAttributeInfoPage} = state
     allAttributeInfo[currentAttributeInfoPage].forEach((item,index)=>{
       if (item.id===payload.id) {
         allAttributeInfo[currentAttributeInfoPage][index]  = payload
       }
-      
     })
     state.allAttributeInfo = JSON.parse(JSON.stringify(allAttributeInfo))
   },
@@ -86,7 +86,7 @@ export default {
   },
 
 
-
+  
   // 车系车型添加页面
   [TYPES.UPDATE_CAR_SERIES_VEHICLE_INFO](state, payload) {
     let { allSeriesVhicleInfo, currentCarSeriesPage } = state
@@ -96,6 +96,11 @@ export default {
     state.currentCarSeriesPage = page
     state.allSeriesVhicleInfo = JSON.parse(JSON.stringify(allSeriesVhicleInfo))
   },
+  // 修改车系车型
+  // [TYPES.MODI_CAR_SERIES_VEHICLE_INFO](state,payload){
+  //   let { allSeriesVhicleInfo, currentCarSeriesPage } = state
+
+  // },
   // 所有的车系信息
   [TYPES.GET_ALL_CAR_SERIES](state,payload){
     if (payload.length>0) {

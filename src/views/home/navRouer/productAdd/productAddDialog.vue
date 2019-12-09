@@ -79,7 +79,7 @@ export default {
       this.form.resetFields();
       this.$emit("clearProductToChild");
     },
-    // 弹窗的确定按钮
+    // 弹窗的确定按钮 处理添加修改
     handleOk(e) {
       e.preventDefault();
       if (this.img) {

@@ -6,6 +6,7 @@
         style="width: 300px"
         @search="onSearch"
         size="default"
+        @change="inputValue"
       >
         <a-button slot="enterButton">搜索</a-button>
       </a-input-search>
@@ -14,9 +15,11 @@
       :style="{ wordBreak: 'break-all' }"
       :rowSelection="rowSelection"
       :columns="columns"
-      :scroll="{x:2400,y:550}"
+      :scroll="{x:2500,y:550}"
       rowKey="id"
+      :bordered="true"
       :pagination="pagination"
+      :customHeaderRow='tableHeader'
       :dataSource="showProductAttribute"
     >
       <template slot="action" slot-scope="item">
@@ -40,6 +43,7 @@ import { reqAllAttributeData } from "@/api";
 import { mapActions, mapState, mapGetters } from "vuex";
 import ProductInfoDialog from "./productInfoDialog";
 import bus from "@/utils/bus";
+import { message } from "ant-design-vue";
 const columns = [
   {
     width: 100,
@@ -47,7 +51,7 @@ const columns = [
     title: "车系",
     dataIndex: "seriesName",
     key: "seriesName",
-    align: "center"
+    align: "center",
   },
   {
     width: 100,
@@ -145,7 +149,7 @@ const columns = [
     align: "center"
   },
   {
-    width: 100,
+    width: 200,
     title: "蕊体尺寸",
     dataIndex: "pistilSize",
     key: "pistilSize",
@@ -190,7 +194,8 @@ export default {
     ...mapState([
       "allAttributeInfo",
       "currentAttributeInfoPage",
-      "allSeriesVhicleInfo"
+      "allSeriesVhicleInfo",
+      "search"
     ]),
     ...mapGetters(["showProductAttribute"]),
     rowSelection() {
@@ -235,27 +240,41 @@ export default {
       };
     }
   },
-
-  mounted() {
+  created(){
     this.getProductAttributeInfo({ page: 1, size: 10 });
   },
-
+  mounted() {
+  },
   methods: {
     ...mapActions([
       "modiActivePath",
       "getProductAttributeInfo",
       "updateCurrentAttributeInfoPage",
-      "deleteProductAttributeInfo"
+      "deleteProductAttributeInfo",
+      "searchAttribute",
+      "searchFlag"
     ]),
+    tableHeader(item){
+        item.forEach(values=>{
+          values.className+=' th-bg'
+        })
+    },
     // 删除某些属性
     deleteAttribute(item) {
-      // console.log(item.id)
       // body 不需要字段
       this.deleteProductAttributeInfo([item.id]).then(() => {
-        this.getProductAttributeInfo({
-          page: this.currentAttributeInfoPage,
-          size: 10
-        });
+        if (this.search) {
+          this.getProductAttributeInfo({
+            page: this.currentAttributeInfoPage,
+            size: 10,
+            keywords: this.search
+          });
+        } else {
+          this.getProductAttributeInfo({
+            page: this.currentAttributeInfoPage,
+            size: 10
+          });
+        }
       });
     },
     // 修改某条属性
@@ -275,25 +294,41 @@ export default {
       });
       item.automobileInformationId = automobileInformationId;
       this.showDataToChild = item;
+      // console.log(this.showDataToChild)
       this.modiActivePath(this.$route.path);
     },
     // 改变页码的回调
     changePage(page) {
+      console.log(page)
       let { allAttributeInfo } = this;
       if (!allAttributeInfo[page]) {
+        if (this.search) {
+          this.searchAttribute({ page, size: 10, keywords: this.search });
+          return;
+        }
         this.getProductAttributeInfo({ page, size: 10 });
       } else {
+        console.log('==')
         this.updateCurrentAttributeInfoPage(page);
       }
     },
     // 清空传递的信息
     clearProductInfoToChild() {
-      
       this.showDataToChild = {};
-      console.log(this.showDataToChild)
+      console.log(this.showDataToChild);
     },
-    onSearch(value) {
-      console.log(value);
+    inputValue(e) {
+      this.searchFlag(e.target.value.trim());
+      if (this.search === "") {
+        this.getProductAttributeInfo({ page: 1, size: 10 });
+      }
+    },
+    onSearch() {
+      if (this.search === "") {
+        message.warning("请输入搜索信息");
+        return;
+      }
+      this.searchAttribute({ page: 1, size: 10, keywords: this.search });
     }
   },
 
@@ -301,13 +336,18 @@ export default {
 };
 </script>
 <style lang='stylus' scoped>
+
 .product-info
   position relative
   width 100%
   height 100%
   background-color #fff
+  /deep/ .ant-table-thead th
+    background-color rgba(33,98,185,.08)
+    color #555
   /deep/ .ant-table-pagination.ant-pagination
     margin-right 20px
+ 
   .search
     position absolute
     top 16px

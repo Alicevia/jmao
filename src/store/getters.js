@@ -15,7 +15,7 @@ export default {
     //     return pages
     //  },
    
-
+    
 
 
     // 显示产品属性页面
@@ -23,14 +23,13 @@ export default {
       let {
         currentAttributeInfoPage,
         allAttributeInfo,
-        search,
+        
         currentSearchPage,
         searchAttributeInfo
       } = state
       let attributeAry = allAttributeInfo[currentAttributeInfoPage]||[]
-      if (search.trim()==='') {
-        return attributeAry
-      }
+      return attributeAry
+      
 
     },
     // 显示产品

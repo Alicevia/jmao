@@ -112,6 +112,7 @@ export default {
     }
   },
   created() {
+    // 一次性获取所有的车系车型信息
     this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
   },
   mounted() {
@@ -130,12 +131,10 @@ export default {
     changePage(page) {
       let { allSeriesVhicleInfo, currentCarSeriesPage } = this;
       this.updateCarSeriesVehicleInfo(page);
- 
-  
     },
     // 修改车型车系
     changeCar(item) {
-      console.log(item);
+      console.log(item)
       this.showDataToChild = item;
       this.modiActivePath(this.$route.path);
     },
@@ -145,26 +144,24 @@ export default {
     },
     // 确定删除
     onDelete(item) {
-      console.log(item.id);
       this.deleteCarSeriesOrVehicle(item.id).then(() => {
         this.getCarSeriesVehicleInfo({ page: 1, size: 9999 });
       });
     }
-    // 删除车型车系
-    // deleteCar(item) {
-    //   // this.deleteTitle(item);
-    //   // console.log(item);
-    // }
   },
 
   components: { AddCarSeriesDialog }
 };
 </script>
 <style lang='stylus' scoped>
+/deep/ .ant-table-thead th
+  background-color rgba(33,98,185,.08)
+  color #555
 .car-add
   width 100%
   height 100%
   overflow hidden
+
   /deep/ .pic
     display inline-block
     width 40px
